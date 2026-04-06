@@ -225,10 +225,10 @@ export default function App() {
                 Saudi Vision 2030 Aligned Infrastructure
               </div>
               <h1 className="text-[60px] lg:text-[72px] font-display font-medium leading-[1.0] tracking-[-1.44px] mb-8 text-pure-white">
-                Enterprise data,<br/>synthesized securely.
+                Enterprise data,<br/>protected securely.
               </h1>
               <p className="text-[18px] text-muted-slate mb-12 max-w-lg leading-[1.4] font-sans">
-                The Privacy-Safe Data Layer for Saudi AI. Deploy state-of-the-art foundation models to transform sensitive records into reverse-engineering proof synthetic twins.
+                The Privacy-Safe Data Layer for Saudi AI. Deploy state-of-the-art foundation models to transform sensitive records into reverse-engineering proof safe data clones.
               </p>
               <button onClick={() => setActiveTab('studio')} className="bg-pure-white text-cohere-black px-8 py-4 rounded-full font-medium flex items-center space-x-2 hover:bg-snow transition-colors">
                 <LayoutDashboard className="w-5 h-5"/>
@@ -289,10 +289,10 @@ export default function App() {
               The Mathematical Solution
             </div>
             <h2 className="text-[48px] font-display font-medium leading-[1.2] tracking-[-0.48px] text-cohere-black mb-10 text-center">
-              Why Synthetic Data is the Solution
+              Why Data Protection is the Solution
             </h2>
             <p className="text-[18px] text-near-black leading-[1.5] mb-8">
-              Developing advanced AI requires substantial volumes of data. Synthetic data generation offers a mathematical guarantee of privacy while preserving <strong>100% of the statistical utility</strong> found in the original dataset.
+              Developing advanced AI requires substantial volumes of data. Data protection models offer a mathematical guarantee of privacy while preserving <strong>100% of the statistical utility</strong> found in the original dataset.
             </p>
             <p className="text-[18px] text-near-black leading-[1.5]">
               This approach is essential to facilitate secure cross-border data sharing, accelerate AI model training, enable safe third-party software testing, and unlock the value of internal datasets. All without exposing any real individual's private information.
@@ -314,7 +314,7 @@ export default function App() {
               <div className="bg-pure-white p-10 rounded-[22px] border border-border-cool hover:border-interaction-blue transition-colors duration-300">
                 <Activity className="text-cohere-black w-8 h-8 mb-8" />
                 <h3 className="text-[24px] font-sans mb-4 text-cohere-black">Kolmogorov-Smirnov Utility</h3>
-                <p className="text-[16px] text-muted-slate leading-[1.5]">Preserve exact schemas and statistical utility proving Machine Learning Test-on-Synthetic reliability.</p>
+                <p className="text-[16px] text-muted-slate leading-[1.5]">Preserve exact schemas and statistical utility proving Machine Learning Test-on-Safe-Data reliability.</p>
               </div>
               <div className="bg-pure-white p-10 rounded-[22px] border border-border-cool hover:border-interaction-blue transition-colors duration-300">
                 <Shield className="text-cohere-black w-8 h-8 mb-8" />
@@ -348,7 +348,7 @@ export default function App() {
         <div className="flex-1 px-4 space-y-1">
           {[
             { id: 'catalog', icon: <Files className="w-4 h-4"/>, label: 'Data Catalog' },
-            { id: 'synthesis', icon: <Zap className="w-4 h-4"/>, label: 'Synthesis Studio' },
+            { id: 'synthesis', icon: <Zap className="w-4 h-4"/>, label: 'Protection Studio' },
             { id: 'models', icon: <Network className="w-4 h-4"/>, label: 'Model Registry' },
             { id: 'reports', icon: <BarChart3 className="w-4 h-4"/>, label: 'Evaluation Audit' },
           ].map(item => (
@@ -439,7 +439,7 @@ export default function App() {
         {studioView === 'synthesis' && (
           <div className="animate-in fade-in max-w-5xl mx-auto">
              <div className="mb-10">
-              <h2 className="text-[32px] font-display font-medium tracking-[-0.32px] text-cohere-black mb-2">Synthesis Studio</h2>
+              <h2 className="text-[32px] font-display font-medium tracking-[-0.32px] text-cohere-black mb-2">Protection Studio</h2>
               <p className="text-[16px] text-muted-slate">Configure generative models and apply differential privacy boundaries.</p>
             </div>
             
@@ -509,7 +509,7 @@ export default function App() {
           <div className="animate-in fade-in max-w-5xl mx-auto">
             <div className="mb-10">
               <h2 className="text-[32px] font-display font-medium tracking-[-0.32px] text-cohere-black mb-2">Model Registry</h2>
-              <p className="text-[16px] text-muted-slate">Fleet of Foundation Models available for synthesis drops.</p>
+              <p className="text-[16px] text-muted-slate">Fleet of Foundation Models available for safe data generation.</p>
             </div>
             
             <div className="grid md:grid-cols-3 gap-6">
@@ -564,7 +564,8 @@ export default function App() {
                          <p className="text-[14px] text-muted-slate">Dataset: {rep.datasetName} • Engine: {rep.config.modelName} • Epsilon: {rep.config.epsilon}</p>
                        </div>
                        <button onClick={() => {
-                          const csvContent = '\uFEFF' + rep.headers.join(',') + '\n' + rep.synthetic.map(r => r.join(',')).join('\n');
+                          const escapeCsv = (val) => typeof val === 'string' && val.includes(',') ? `"${val}"` : val;
+                          const csvContent = '\uFEFF' + rep.headers.map(escapeCsv).join(',') + '\n' + rep.synthetic.map(r => r.map(escapeCsv).join(',')).join('\n');
                           const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
                           const link = document.createElement('a');
                           const url = URL.createObjectURL(blob);
@@ -617,17 +618,11 @@ export default function App() {
                                 </tr>
                               </thead>
                               <tbody>
-                                {rep.synthetic.slice(0, 2).map((row, rIdx) => (
-                                  <React.Fragment key={rIdx}>
-                                    <tr className="border-b border-lightest-gray bg-[#fafafa]">
-                                      <td className="px-4 py-3 text-[12px] font-mono text-muted-slate"><span className="px-2 py-1 border border-border-cool rounded-sm bg-pure-white">Original</span></td>
-                                      {rep.original[rIdx].slice(0,3).map((c, cIdx) => <td key={cIdx} className="px-4 py-3 text-muted-slate line-through decoration-muted-slate/30">{c}</td>)}
-                                    </tr>
-                                    <tr className="border-b-[2px] last:border-0 border-border-cool bg-pure-white">
-                                      <td className="px-4 py-3 text-[12px] font-mono font-medium text-interaction-blue"><span className="px-2 py-1 bg-[#1863dc10] rounded-sm flex items-center w-max"><Zap className="w-3 h-3 mr-1"/> Synthetic</span></td>
-                                      {row.slice(0,3).map((c, cIdx) => <td key={cIdx} className="px-4 py-3 text-cohere-black font-medium">{c}</td>)}
-                                    </tr>
-                                  </React.Fragment>
+                                {rep.synthetic.slice(0, 3).map((row, rIdx) => (
+                                  <tr key={rIdx} className="border-b last:border-0 border-lightest-gray bg-pure-white">
+                                    <td className="px-4 py-3 text-[12px] font-mono font-medium text-interaction-blue"><span className="px-2 py-1 bg-[#1863dc10] rounded-sm flex items-center w-max"><Zap className="w-3 h-3 mr-1"/> Synthetic</span></td>
+                                    {row.slice(0,3).map((c, cIdx) => <td key={cIdx} className="px-4 py-3 text-cohere-black font-medium">{c}</td>)}
+                                  </tr>
                                 ))}
                               </tbody>
                             </table>
