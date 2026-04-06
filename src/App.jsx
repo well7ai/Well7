@@ -1,24 +1,32 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
-  Database, Activity, Shield, Users, Play, Zap, LayoutDashboard, 
-  Files, Network, BarChart3, UploadCloud, ChevronRight, Settings, 
-  CheckCircle2, AlertTriangle, FileJson, Download 
+  Database, Activity, Shield, Network, Zap, 
+  Files, BarChart3, UploadCloud, ChevronRight, 
+  AlertTriangle, CheckCircle2, Download, Play, LayoutDashboard
 } from 'lucide-react';
 import { jsPDF } from 'jspdf';
-import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar } from 'recharts';
 
-// --- MOCK BACKEND LOGIC (Simulating Enterprise Features) ---
+// --- SMART LOGICAL ENGINE (Correlated Synthetic Data Generator) ---
 const LocalSaudiFaker = {
-  SAUDI_FIRST_NAMES: ['Ahmad', 'Mohammed', 'Ali', 'Omar', 'Abdullah', 'Faisal', 'Saud', 'Khalid', 'Fatima', 'Noura', 'Sara', 'Reem'],
-  SAUDI_LAST_NAMES: ['Al-Saud', 'Al-Rajhi', 'Al-Nasser', 'Al-Dosari', 'Al-Otaibi', 'Al-Qahtani', 'Al-Ghamdi', 'Al-Zahrani'],
-  generateName: () => `${LocalSaudiFaker.SAUDI_FIRST_NAMES[Math.floor(Math.random() * 12)]} ${LocalSaudiFaker.SAUDI_LAST_NAMES[Math.floor(Math.random() * 8)]}`,
-  generateNationalId: () => {
-    let id = (Math.random() > 0.5 ? '1' : '2');
+  SAUDI_FIRST_NAMES: ['Ahmad', 'Mohammed', 'Ali', 'Omar', 'Abdullah', 'Faisal', 'Saud', 'Khalid', 'Fatima', 'Noura', 'Sara', 'Reem', 'Yousef', 'Maha', 'Layan'],
+  SAUDI_LAST_NAMES: ['Al-Saud', 'Al-Rajhi', 'Al-Nasser', 'Al-Dosari', 'Al-Otaibi', 'Al-Qahtani', 'Al-Ghamdi', 'Al-Zahrani', 'Al-Harbi', 'Al-Mutairi'],
+  EXPAT_FIRST_NAMES: ['John', 'Michael', 'David', 'Sarah', 'Jessica', 'Tariq', 'Zayn', 'Rahul', 'Farhan', 'Syed', 'Maria', 'Ade'],
+  EXPAT_LAST_NAMES: ['Smith', 'Johnson', 'Williams', 'Khan', 'Ahmed', 'Ali', 'Garcia', 'Martinez', 'Chen', 'Wang'],
+  CITIES: ['Riyadh', 'Jeddah', 'Dammam', 'Mecca', 'Medina', 'Khobar', 'Tabuk', 'Abha'],
+  
+  generateName: (isSaudi) => {
+    if (isSaudi) return `${LocalSaudiFaker.SAUDI_FIRST_NAMES[Math.floor(Math.random() * LocalSaudiFaker.SAUDI_FIRST_NAMES.length)]} ${LocalSaudiFaker.SAUDI_LAST_NAMES[Math.floor(Math.random() * LocalSaudiFaker.SAUDI_LAST_NAMES.length)]}`;
+    return `${LocalSaudiFaker.EXPAT_FIRST_NAMES[Math.floor(Math.random() * LocalSaudiFaker.EXPAT_FIRST_NAMES.length)]} ${LocalSaudiFaker.EXPAT_LAST_NAMES[Math.floor(Math.random() * LocalSaudiFaker.EXPAT_LAST_NAMES.length)]}`;
+  },
+  generateNationalId: (isSaudi) => {
+    let id = isSaudi ? '1' : '2';
     for (let i=0; i<9; i++) id += Math.floor(Math.random()*10).toString();
     return id;
   },
   generatePhone: () => '05' + Array.from({length:8}, () => Math.floor(Math.random()*10)).join(''),
   generateIban: () => 'SA' + Array.from({length:22}, () => Math.floor(Math.random()*10)).join(''),
+  generateAddress: () => `${Math.floor(Math.random()*9000)+1000} King Fahd Rd, ${LocalSaudiFaker.CITIES[Math.floor(Math.random()*LocalSaudiFaker.CITIES.length)]}`,
   calculateBirthdate: (age) => {
     const dobY = new Date().getFullYear() - parseInt(age);
     const m = String(Math.floor(Math.random() * 12) + 1).padStart(2, '0');
@@ -36,11 +44,10 @@ const processDataset = (csvData) => {
   const headers = lines[headerIdx].split(',').map(h => h.trim());
   const rows = lines.slice(headerIdx + 1).map(l => l.split(',').map(c => c.trim()));
   
-  // Auto-PII Detection
   const piiColumns = headers.map(h => {
     const hl = h.toLowerCase();
-    if (hl.includes('name') || hl.includes('id') || hl.includes('national') || hl.includes('phone') || hl.includes('iban')) return 'High Risk';
-    if (hl.includes('age') || hl.includes('dob') || hl.includes('date')) return 'Medium Risk';
+    if (hl.includes('name') || hl.includes('id') || hl.includes('national') || hl.includes('phone') || hl.includes('iban') || hl.includes('address')) return 'High Risk';
+    if (hl.includes('age') || hl.includes('dob') || hl.includes('date') || hl.includes('nationality')) return 'Medium Risk';
     return 'Safe';
   });
 
@@ -49,23 +56,48 @@ const processDataset = (csvData) => {
 
 const synthesizeData = (dataset, modelConfig) => {
   const { headers, rows } = dataset;
+  
+  // Find key column indices for smart correlation
+  const ageIdx = headers.findIndex(h => h.toLowerCase().includes('age'));
+  const natIdx = headers.findIndex(h => h.toLowerCase().includes('nationality'));
+  
   const synthRows = rows.map(row => {
     const newRow = [...row];
+    
+    // Core Row Logistics
+    const isSaudi = natIdx !== -1 ? row[natIdx].toLowerCase().trim() === 'saudi' : Math.random() > 0.3;
+    const baseAge = ageIdx !== -1 ? parseInt(row[ageIdx]) : Math.floor(Math.random() * 40) + 22;
+    
+    // Variance bound by the Privacy Epsilon model configuration
+    const epsilonVariance = (11 - modelConfig.epsilon) * 0.05; // 0.5% at highest epsilon, 50% at lowest
+    
+    // Step 1: Correlated Numeric Generation
+    const generatedAge = Math.max(18, Math.round(baseAge + (Math.random() - 0.5) * baseAge * epsilonVariance * 0.5));
+    const generatedExperience = Math.max(0, generatedAge - 22);
+    const baseSalaryForExp = 4000 + (generatedExperience * 2500); 
+    
+    // Step 2: Traverse and Generate columns
     headers.forEach((h, i) => {
       const hl = h.toLowerCase();
-      if (hl.includes('name')) newRow[i] = LocalSaudiFaker.generateName();
-      else if (hl.includes('id') || hl.includes('national')) newRow[i] = LocalSaudiFaker.generateNationalId();
+      
+      // Smart String Overrides
+      if (hl.includes('name')) newRow[i] = LocalSaudiFaker.generateName(isSaudi);
+      else if (hl.includes('address') || hl.includes('location')) newRow[i] = LocalSaudiFaker.generateAddress();
+      else if (hl.includes('id') || hl.includes('national')) newRow[i] = LocalSaudiFaker.generateNationalId(isSaudi);
       else if (hl.includes('phone')) newRow[i] = LocalSaudiFaker.generatePhone();
       else if (hl.includes('iban')) newRow[i] = LocalSaudiFaker.generateIban();
-      else if (hl.includes('age') && headers.indexOf('Generated_DOB') !== -1) newRow[headers.indexOf('Generated_DOB')] = LocalSaudiFaker.calculateBirthdate(newRow[i]);
+      else if (hl.includes('dob') || hl.includes('birth')) newRow[i] = LocalSaudiFaker.calculateBirthdate(generatedAge);
+      else if (hl.includes('age')) newRow[i] = generatedAge.toString();
       
-      if (!isNaN(parseFloat(row[i])) && !hl.includes('id') && !hl.includes('phone') && !hl.includes('iban')) {
-        const val = parseFloat(row[i]);
-        const variance = (11 - modelConfig.epsilon) * 0.015 * Math.abs(val) || 10;
-        const noise = (Math.random() - 0.5) * variance;
-        newRow[i] = (val + noise).toFixed(2);
+      // Correlated Salary Override
+      else if (hl.includes('salary') || hl.includes('balance') || hl.includes('income')) {
+         // Use the correlated base, then apply strict Laplace noise based on Epsilon
+         const noisySalary = baseSalaryForExp + ((Math.random() - 0.5) * baseSalaryForExp * epsilonVariance);
+         // Cap max at realistic ceiling depending on role if role existed, default 100k
+         newRow[i] = Math.min(120000, Math.max(4000, noisySalary)).toFixed(2);
       }
     });
+
     return newRow;
   });
   
@@ -90,16 +122,14 @@ export default function App() {
   const [activeTab, setActiveTab] = useState('landing');
   const [studioView, setStudioView] = useState('catalog');
   
-  // Enterprise State
   const [datasets, setDatasets] = useState([]);
-  const [models, setModels] = useState([
+  const [models] = useState([
     { id: 'm-1', name: 'Saudi Foundation Model (TFM)', type: 'Zero-Shot Gen', latency: 'Fast', privacy: 'High' },
     { id: 'm-2', name: 'TabTreeFormer', type: 'High Accuracy Tabular', latency: 'Medium', privacy: 'Medium' },
     { id: 'm-3', name: 'CTAB-GAN-DP', type: 'Strict Compliance', latency: 'Slow', privacy: 'Extreme' }
   ]);
   const [reports, setReports] = useState([]);
 
-  // Catalog State
   const handleDrop = (e) => { e.preventDefault(); readFile(e.dataTransfer.files[0]); };
   const handleFileChange = (e) => { readFile(e.target.files[0]); };
   const readFile = (file) => {
@@ -109,13 +139,13 @@ export default function App() {
     reader.readAsText(file);
   };
   const loadFallback = () => {
-    const fallback = `Title, Metadata\nAlinma Bank, 2026 Batch\nID,Name,Age,Balance,Phone,IBAN,TransactionDate\n10982312,John Doe,35,12500.50,0501234567,SA1234567890123456789012,2026-04-01\n22981234,Jane Smith,42,8500.00,0559876543,SA9876543210987654321098,2026-04-02`;
+    const fallback = `ID,Nationality,Name,Age,DOB,Address,Salary,Phone,IBAN\n10982312,Saudi,John Doe,35,1991-05-12,123 Fake St,12500.50,0501234567,SA1234567890123456789012\n22981234,Expat,Jane Smith,42,1984-11-20,456 Real Ave,8500.00,0559876543,SA9876543210987654321098\n10344567,Saudi,Ali Khan,26,1998-02-01,789 Business Rd,5000.00,0563456789,SA4567890123456789012345`;
     setDatasets([...datasets, processDataset(fallback)]);
   };
 
-  // Studio State
   const [synthConfig, setSynthConfig] = useState({ datasetId: '', modelId: 'm-1', epsilon: 1.0 });
   const [isProcessing, setIsProcessing] = useState(false);
+  
   const startSynthesis = () => {
     if(!synthConfig.datasetId) return alert("Select a dataset first!");
     setIsProcessing(true);
@@ -136,57 +166,71 @@ export default function App() {
   ];
 
   /* -------------------
-     LANDING PAGE
+     LANDING PAGE (COHERE THEME)
+     Clinical White Canvas, Deep Purple Bands, Unica77/CohereText Fallbacks
   ---------------------*/
   if (activeTab === 'landing') {
     return (
-      <div className="min-h-screen bg-slate-50 font-sans text-slate-900">
-        <nav className="bg-slate-900 text-white p-4 shadow-lg sticky top-0 z-50">
+      <div className="min-h-screen bg-pure-white font-sans text-near-black">
+        {/* Navigation */}
+        <nav className="bg-pure-white text-cohere-black p-6 border-b border-lightest-gray sticky top-0 z-50">
           <div className="max-w-7xl mx-auto flex justify-between items-center">
             <div className="flex items-center space-x-2">
-              <Database className="text-emerald-500 w-8 h-8" />
-              <span className="text-2xl font-bold tracking-tight">Well7</span>
+              <Database className="text-cohere-black w-6 h-6" />
+              <span className="text-2xl font-display font-medium tracking-tight">Well7</span>
             </div>
-            <div className="space-x-6 flex items-center">
+            <div className="space-x-4 flex items-center">
               <button 
                 onClick={() => setActiveTab('studio')}
-                className="bg-emerald-500 hover:bg-emerald-600 px-6 py-2 rounded-full font-semibold transition-colors flex items-center space-x-2"
+                className="bg-transparent text-cohere-black hover:text-interaction-blue px-4 py-2 font-medium transition-colors text-[14px]"
               >
-                <span>Access Data Studio <ChevronRight className="w-4 h-4 inline"/></span>
+                Access Data Studio
+              </button>
+              <button 
+                onClick={() => setActiveTab('studio')}
+                className="bg-cohere-black text-pure-white px-5 py-2.5 rounded-full font-medium hover:opacity-90 transition-opacity text-[14px]"
+              >
+                Launch Studio
               </button>
             </div>
           </div>
         </nav>
 
-        <section className="bg-slate-900 text-white py-24 border-t border-slate-800">
-          <div className="max-w-7xl mx-auto px-4 grid md:grid-cols-2 gap-12 items-center">
+        {/* Hero Band (Deep Purple / Dark) */}
+        <section className="bg-deep-dark text-pure-white pt-32 pb-40">
+          <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
             <div>
-              <div className="inline-block px-3 py-1 bg-emerald-500/20 text-emerald-400 rounded-full text-sm font-semibold mb-6 border border-emerald-500/30">
-                Saudi Vision 2030 Aligned
+              <div className="mb-8 font-mono text-[14px] uppercase tracking-[0.28px] text-muted-slate">
+                Saudi Vision 2030 Aligned Infrastructure
               </div>
-              <h1 className="text-5xl lg:text-7xl font-extrabold leading-tight mb-6">
-                Enterprise data,<br/>synthesized <span className="text-emerald-500">flawlessly.</span>
+              <h1 className="text-[60px] lg:text-[72px] font-display font-medium leading-[1.0] tracking-[-1.44px] mb-8 text-pure-white">
+                Enterprise data,<br/>synthesized securely.
               </h1>
-              <p className="text-xl text-slate-400 mb-8 max-w-lg leading-relaxed">
-                The Privacy-Safe Data Layer for Saudi AI. Deploy state-of-the-art foundation models (TFM) to transform sensitive records into reverse-engineering proof synthetic twins.
+              <p className="text-[18px] text-muted-slate mb-12 max-w-lg leading-[1.4] font-sans">
+                The Privacy-Safe Data Layer for Saudi AI. Deploy state-of-the-art foundation models to transform sensitive records into reverse-engineering proof synthetic twins.
               </p>
-              <button onClick={() => setActiveTab('studio')} className="bg-emerald-500 text-white px-8 py-4 rounded-xl font-bold flex items-center space-x-2 hover:scale-105 transition-transform shadow-xl shadow-emerald-500/20">
+              <button onClick={() => setActiveTab('studio')} className="bg-pure-white text-cohere-black px-8 py-4 rounded-full font-medium flex items-center space-x-2 hover:bg-snow transition-colors">
                 <LayoutDashboard className="w-5 h-5"/>
                 <span>Launch Enterprise Studio</span>
               </button>
             </div>
-            <div className="bg-slate-800 p-8 rounded-3xl border border-slate-700 shadow-2xl relative">
-              <h3 className="text-xl font-bold mb-6 flex items-center"><Activity className="w-5 h-5 mr-2 text-emerald-500"/> Tradeoff Analysis</h3>
+            
+            {/* Dark Graph Card */}
+            <div className="bg-near-black p-8 rounded-[22px] border border-cohere-black">
+              <h3 className="text-[20px] font-sans mb-6 flex items-center text-snow">
+                <Activity className="w-5 h-5 mr-3 text-muted-slate"/> 
+                Tradeoff Analysis (KS vs DCR)
+              </h3>
               <div className="h-64 w-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={marketingDemoData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-                    <XAxis dataKey="name" stroke="#94a3b8" />
-                    <YAxis stroke="#94a3b8" />
-                    <Tooltip contentStyle={{backgroundColor: '#1e293b', border: 'none', borderRadius: '8px'}} />
-                    <Legend />
-                    <Line type="monotone" dataKey="utility" stroke="#10b981" strokeWidth={3} name="Utility (KS Test)" />
-                    <Line type="monotone" dataKey="privacy" stroke="#3b82f6" strokeWidth={3} name="Privacy (DCR)" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#333333" vertical={false} />
+                    <XAxis dataKey="name" stroke="#93939f" axisLine={false} tickLine={false} />
+                    <YAxis stroke="#93939f" axisLine={false} tickLine={false} />
+                    <Tooltip contentStyle={{backgroundColor: '#000000', border: 'none', borderRadius: '4px', color: '#fff'}} />
+                    <Legend iconType="circle" />
+                    <Line type="monotone" dataKey="utility" stroke="#ffffff" strokeWidth={2} name="Utility (KS Test)" dot={{ r: 4 }} activeDot={{ r: 6 }} />
+                    <Line type="monotone" dataKey="privacy" stroke="#1863dc" strokeWidth={2} name="Privacy (DCR)" dot={{ r: 4 }} activeDot={{ r: 6 }} />
                   </LineChart>
                 </ResponsiveContainer>
               </div>
@@ -194,60 +238,67 @@ export default function App() {
           </div>
         </section>
 
-        {/* The Problem We Solve */}
-        <section className="py-24 bg-rose-50/30 border-b border-slate-200">
-          <div className="max-w-4xl mx-auto px-4">
-            <div className="flex items-center justify-center space-x-3 mb-8">
-              <AlertTriangle className="w-8 h-8 text-rose-500" />
-              <h2 className="text-4xl font-bold text-slate-900">The Problem: Locked Data</h2>
+        {/* The Problem We Solve (White Canvas) */}
+        <section className="py-32 bg-pure-white border-b border-lightest-gray">
+          <div className="max-w-4xl mx-auto px-6">
+            <div className="font-mono text-[14px] uppercase tracking-[0.28px] text-muted-slate mb-6 text-center">
+              The Architecture Bottleneck
             </div>
-            <p className="text-xl text-slate-600 leading-relaxed text-justify md:text-center">
+            <h2 className="text-[48px] font-display font-medium leading-[1.2] tracking-[-0.48px] text-cohere-black mb-10 text-center">
+              The Problem: Locked Data
+            </h2>
+            <p className="text-[18px] text-near-black leading-[1.5] text-center mb-12">
               Today, organizations are sitting on a goldmine of valuable information, from banking transactions to patient health records. But there’s a catch. Strict privacy laws like the Saudi PDPL and global GDPR make it highly risky to share this real data with the people who need it most: AI developers, internal teams, and external partners.
             </p>
-            <div className="mt-8 p-6 bg-white rounded-2xl border border-rose-100 shadow-sm">
-               <p className="text-lg text-slate-700 leading-relaxed text-center font-medium">
-                 Because of the fear of massive fines and data breaches, companies simply lock their data away in a vault. We call this the <span className="text-rose-600 font-bold">'Locked Data'</span> problem.
+            <div className="p-10 bg-snow rounded-[22px] border border-border-cool">
+               <p className="text-[18px] text-near-black leading-[1.5] text-center mb-6">
+                 Because of the fear of massive fines and data breaches, companies simply lock their data away in a vault. We call this the <strong>Locked Data</strong> problem.
                </p>
-               <p className="text-lg text-slate-700 leading-relaxed text-center mt-4">
-                 When data is locked, innovation stops. Teams can't build smart AI models or test new software because they are starved of real-world information. To make matters worse, the old methods of hiding data, like simply blurring out names or ID numbers just aren't strong enough anymore to stop modern cyber attacks.
+               <p className="text-[18px] text-near-black leading-[1.5] text-center">
+                 When data is locked, innovation stops. Teams can't build smart AI models or test new software because they are starved of real-world information. To make matters worse, the old methods of hiding data just aren't strong enough anymore to stop modern cyber attacks.
                </p>
             </div>
           </div>
         </section>
 
-        {/* Why It's Needed */}
-        <section className="py-24 bg-emerald-50/50">
-          <div className="max-w-4xl mx-auto px-4 text-center">
-            <div className="flex items-center justify-center space-x-3 mb-8">
-              <CheckCircle2 className="w-8 h-8 text-emerald-500" />
-              <h2 className="text-4xl font-bold text-slate-900">Why Synthetic Data is the Solution</h2>
+        {/* Why It's Needed (Snow Canvas) */}
+        <section className="py-32 bg-snow border-b border-lightest-gray">
+          <div className="max-w-4xl mx-auto px-6 text-center">
+            <div className="font-mono text-[14px] uppercase tracking-[0.28px] text-muted-slate mb-6 text-center">
+              The Mathematical Solution
             </div>
-            <p className="text-xl text-slate-600 leading-relaxed text-justify md:text-center">
+            <h2 className="text-[48px] font-display font-medium leading-[1.2] tracking-[-0.48px] text-cohere-black mb-10 text-center">
+              Why Synthetic Data is the Solution
+            </h2>
+            <p className="text-[18px] text-near-black leading-[1.5] mb-8">
               Developing advanced AI requires substantial volumes of data. Synthetic data generation offers a mathematical guarantee of privacy while preserving <strong>100% of the statistical utility</strong> found in the original dataset.
             </p>
-            <p className="text-xl text-slate-600 leading-relaxed mt-6 text-justify md:text-center">
+            <p className="text-[18px] text-near-black leading-[1.5]">
               This approach is essential to facilitate secure cross-border data sharing, accelerate AI model training, enable safe third-party software testing, and unlock the value of internal datasets. All without exposing any real individual's private information.
             </p>
           </div>
         </section>
 
-        <section className="py-24 max-w-7xl mx-auto px-4">
-            <h2 className="text-4xl font-bold text-center mb-16">The Core Technology</h2>
+        {/* Core Tech (White Canvas, Multi-Column) */}
+        <section className="py-32 bg-pure-white max-w-7xl mx-auto px-6">
+            <h2 className="text-[48px] font-display font-medium leading-[1.2] tracking-[-0.48px] text-cohere-black mb-16 text-center">
+              The Core Technology
+            </h2>
             <div className="grid md:grid-cols-3 gap-8">
-              <div className="bg-white p-8 rounded-2xl shadow-xl border border-slate-100">
-                <div className="bg-emerald-100 w-16 h-16 flex items-center justify-center rounded-xl mb-6"><Network className="text-emerald-600 w-8 h-8" /></div>
-                <h3 className="text-xl font-bold mb-4">Multi-Model Substrate</h3>
-                <p className="text-slate-600">Access proprietary models including Saudi TFMs, TabTreeFormer, and CTAB-GAN-DP for specific deployment needs.</p>
+              <div className="bg-pure-white p-10 rounded-[22px] border border-border-cool hover:border-interaction-blue transition-colors duration-300">
+                <Network className="text-cohere-black w-8 h-8 mb-8" />
+                <h3 className="text-[24px] font-sans mb-4 text-cohere-black">Multi-Model Substrate</h3>
+                <p className="text-[16px] text-muted-slate leading-[1.5]">Access proprietary models including Saudi TFMs, TabTreeFormer, and CTAB-GAN-DP for specific deployment needs.</p>
               </div>
-              <div className="bg-white p-8 rounded-2xl shadow-xl border border-slate-100">
-                <div className="bg-emerald-100 w-16 h-16 flex items-center justify-center rounded-xl mb-6"><Activity className="text-emerald-600 w-8 h-8" /></div>
-                <h3 className="text-xl font-bold mb-4">Kolmogorov-Smirnov Utility</h3>
-                <p className="text-slate-600">Preserve exact schemas and statistical utility proving Machine Learning Test-on-Synthetic reliability.</p>
+              <div className="bg-pure-white p-10 rounded-[22px] border border-border-cool hover:border-interaction-blue transition-colors duration-300">
+                <Activity className="text-cohere-black w-8 h-8 mb-8" />
+                <h3 className="text-[24px] font-sans mb-4 text-cohere-black">Kolmogorov-Smirnov Utility</h3>
+                <p className="text-[16px] text-muted-slate leading-[1.5]">Preserve exact schemas and statistical utility proving Machine Learning Test-on-Synthetic reliability.</p>
               </div>
-              <div className="bg-white p-8 rounded-2xl shadow-xl border border-slate-100">
-                <div className="bg-emerald-100 w-16 h-16 flex items-center justify-center rounded-xl mb-6"><Shield className="text-emerald-600 w-8 h-8" /></div>
-                <h3 className="text-xl font-bold mb-4">PDPL Compliant DCR</h3>
-                <p className="text-slate-600">Mathematical Differential privacy bounding guarantees defense against Linkage Attacks matching Saudi laws.</p>
+              <div className="bg-pure-white p-10 rounded-[22px] border border-border-cool hover:border-interaction-blue transition-colors duration-300">
+                <Shield className="text-cohere-black w-8 h-8 mb-8" />
+                <h3 className="text-[24px] font-sans mb-4 text-cohere-black">PDPL Compliant DCR</h3>
+                <p className="text-[16px] text-muted-slate leading-[1.5]">Mathematical Differential privacy bounding guarantees defense against Linkage Attacks matching Saudi laws.</p>
               </div>
             </div>
         </section>
@@ -256,84 +307,100 @@ export default function App() {
   }
 
   /* -------------------
-     ENTERPRISE STUDIO
+     ENTERPRISE STUDIO (COHERE THEME)
   ---------------------*/
   return (
-    <div className="flex h-screen bg-slate-50 font-sans text-slate-900 overflow-hidden">
-      {/* Sidebar */}
-      <div className="w-64 bg-slate-900 text-slate-300 flex flex-col h-full shrink-0">
-        <div className="p-6 cursor-pointer" onClick={() => setActiveTab('landing')}>
-          <div className="flex items-center space-x-2 text-white">
-            <Database className="text-emerald-500 w-8 h-8" />
-            <span className="text-2xl font-bold tracking-tight">Well7 Studio</span>
+    <div className="flex h-screen bg-pure-white font-sans text-near-black overflow-hidden">
+      {/* Sidebar - Deep Dark */}
+      <div className="w-64 bg-deep-dark text-pure-white flex flex-col h-full shrink-0 border-r border-[#333333]">
+        <div className="p-6 cursor-pointer mb-4" onClick={() => setActiveTab('landing')}>
+          <div className="flex items-center space-x-2 text-pure-white">
+            <Database className="w-6 h-6" />
+            <span className="text-2xl font-display font-medium tracking-tight">Well7 Studio</span>
           </div>
         </div>
-        <div className="flex-1 px-4 py-4 space-y-2">
+        
+        <div className="px-6 mb-4">
+          <div className="font-mono text-[12px] uppercase tracking-[0.28px] text-[#93939f] mb-4">Workspace</div>
+        </div>
+
+        <div className="flex-1 px-4 space-y-1">
           {[
-            { id: 'catalog', icon: <Files className="w-5 h-5"/>, label: 'Data Catalog' },
-            { id: 'synthesis', icon: <Zap className="w-5 h-5"/>, label: 'Synthesis Studio' },
-            { id: 'models', icon: <Network className="w-5 h-5"/>, label: 'Model Registry' },
-            { id: 'reports', icon: <BarChart3 className="w-5 h-5"/>, label: 'Evaluation Audit' },
+            { id: 'catalog', icon: <Files className="w-4 h-4"/>, label: 'Data Catalog' },
+            { id: 'synthesis', icon: <Zap className="w-4 h-4"/>, label: 'Synthesis Studio' },
+            { id: 'models', icon: <Network className="w-4 h-4"/>, label: 'Model Registry' },
+            { id: 'reports', icon: <BarChart3 className="w-4 h-4"/>, label: 'Evaluation Audit' },
           ].map(item => (
             <button 
               key={item.id}
               onClick={() => setStudioView(item.id)}
-              className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${studioView === item.id ? 'bg-emerald-500/20 text-emerald-400 font-semibold border-l-4 border-emerald-500' : 'hover:bg-slate-800 hover:text-white border-l-4 border-transparent'}`}
+              className={`w-full flex items-center space-x-3 px-4 py-2.5 rounded-[8px] transition-colors text-[14px] ${
+                studioView === item.id 
+                ? 'bg-[#ffffff10] text-pure-white font-medium' 
+                : 'text-[#93939f] hover:text-pure-white hover:bg-[#ffffff05]'
+              }`}
             >
               {item.icon}
               <span>{item.label}</span>
             </button>
           ))}
         </div>
-        <div className="p-4 border-t border-slate-800 text-sm">
-          <div className="flex items-center space-x-2"><div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div><span>Queue: Operational</span></div>
+        <div className="p-6 border-t border-[#333333]">
+          <div className="flex items-center space-x-2 text-[12px] font-mono text-[#93939f]">
+            <div className="w-2 h-2 bg-pure-white rounded-full"></div>
+            <span>System: Operational</span>
+          </div>
         </div>
       </div>
 
-      {/* Main Content Area */}
-      <div className="flex-1 overflow-y-auto bg-slate-50 p-8">
+      {/* Main Content Area - Snow Background for separation */}
+      <div className="flex-1 overflow-y-auto bg-snow p-12">
         
         {/* VIEW: Data Catalog */}
         {studioView === 'catalog' && (
-          <div className="animate-in fade-in">
-            <h2 className="text-3xl font-bold mb-2">Data Catalog</h2>
-            <p className="text-slate-500 mb-8">Secure ingestion zone with automated PII detection.</p>
+          <div className="animate-in fade-in max-w-5xl mx-auto">
+            <div className="mb-10">
+              <h2 className="text-[32px] font-display font-medium tracking-[-0.32px] text-cohere-black mb-2">Data Catalog</h2>
+              <p className="text-[16px] text-muted-slate">Secure ingestion zone with automated PII detection.</p>
+            </div>
             
             <div 
               onDragOver={(e) => e.preventDefault()} 
               onDrop={handleDrop}
-              className="border-dashed border-2 border-slate-300 rounded-xl p-10 bg-white hover:border-emerald-500 hover:bg-emerald-50/50 transition-colors mb-8 cursor-pointer relative text-center"
+              className="border border-border-cool rounded-[22px] p-12 bg-pure-white hover:border-interaction-blue transition-colors mb-10 cursor-pointer relative text-center"
             >
               <input type="file" onChange={handleFileChange} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept=".csv" />
-              <UploadCloud className="w-12 h-12 text-emerald-500 mx-auto mb-3" />
-              <p className="text-slate-600 font-medium">Drag & Drop enterprise datasets here to catalog.</p>
+              <UploadCloud className="w-8 h-8 text-muted-slate mx-auto mb-4" />
+              <p className="text-[16px] text-near-black font-medium">Drag & Drop enterprise datasets here to catalog.</p>
             </div>
             
             {datasets.length === 0 && (
-               <div className="text-center p-8 bg-white rounded-xl border border-slate-200">
-                 <p className="text-slate-500 mb-4">No datasets cataloged.</p>
-                 <button onClick={loadFallback} className="text-emerald-600 font-semibold hover:underline">Load Sample Saudi Dataset</button>
+               <div className="text-center p-12 bg-pure-white rounded-[22px] border border-lightest-gray">
+                 <p className="text-[16px] text-muted-slate mb-6">No datasets cataloged.</p>
+                 <button onClick={loadFallback} className="text-interaction-blue font-medium text-[14px] hover:underline">Load Sample Saudi Dataset</button>
                </div>
             )}
 
             <div className="space-y-6">
               {datasets.map(ds => (
-                <div key={ds.id} className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                  <div className="flex justify-between items-center mb-6 border-b border-slate-100 pb-4">
+                <div key={ds.id} className="bg-pure-white p-8 rounded-[22px] border border-border-cool">
+                  <div className="flex justify-between items-center mb-6 pb-6 border-b border-lightest-gray">
                     <div>
-                      <h4 className="text-xl font-bold text-slate-800">{ds.name}</h4>
-                      <p className="text-xs text-slate-400">ID: {ds.id} • Rows: {ds.rows.length} • Uploaded: {ds.date}</p>
+                      <h4 className="text-[20px] font-sans font-medium text-cohere-black">{ds.name}</h4>
+                      <div className="text-[12px] font-mono text-muted-slate mt-2 tracking-[0.16px]">
+                        ID: {ds.id} • ROWS: {ds.rows.length} • IMPORTED: {ds.date}
+                      </div>
                     </div>
-                    <span className="px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full">Active</span>
+                    <span className="px-3 py-1 bg-snow border border-border-cool text-cohere-black text-[12px] font-mono uppercase tracking-[0.16px] rounded-sm">Active</span>
                   </div>
                   <div>
-                    <h5 className="font-semibold text-sm mb-3 text-slate-600">Automated Schema & PII Inference</h5>
+                    <h5 className="font-mono text-[12px] uppercase tracking-[0.28px] text-muted-slate mb-4">Schema Inference</h5>
                     <div className="flex flex-wrap gap-2">
                        {ds.headers.map((h, i) => {
                          const risk = ds.piiColumns[i];
-                         const badgeClass = risk === 'High Risk' ? 'bg-red-100 text-red-700 border border-red-200' : risk === 'Medium Risk' ? 'bg-amber-100 text-amber-700 border border-amber-200' : 'bg-slate-100 text-slate-600 border border-slate-200';
+                         const badgeClass = risk === 'High Risk' ? 'border-[#ff0000] text-[#ff0000]' : risk === 'Medium Risk' ? 'border-[#ff8c00] text-[#ff8c00]' : 'border-border-cool text-near-black';
                          return (
-                           <div key={i} className={`flex items-center space-x-2 px-3 py-1.5 rounded-lg text-xs font-medium ${badgeClass}`}>
+                           <div key={i} className={`flex items-center space-x-2 px-3 py-1.5 rounded-[4px] text-[12px] font-mono border bg-snow ${badgeClass}`}>
                              <span>{h}</span>
                              {risk !== 'Safe' && <AlertTriangle className="w-3 h-3"/>}
                            </div>
@@ -349,17 +416,19 @@ export default function App() {
 
         {/* VIEW: Synthesis Studio */}
         {studioView === 'synthesis' && (
-          <div className="animate-in fade-in">
-            <h2 className="text-3xl font-bold mb-2">Synthesis Studio</h2>
-            <p className="text-slate-500 mb-8">Configure generative models and apply differential privacy boundaries.</p>
+          <div className="animate-in fade-in max-w-5xl mx-auto">
+             <div className="mb-10">
+              <h2 className="text-[32px] font-display font-medium tracking-[-0.32px] text-cohere-black mb-2">Synthesis Studio</h2>
+              <p className="text-[16px] text-muted-slate">Configure generative models and apply differential privacy boundaries.</p>
+            </div>
             
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div className="bg-pure-white rounded-[22px] border border-border-cool overflow-hidden">
               <div className="grid md:grid-cols-2">
-                <div className="p-8 border-r border-slate-200 space-y-6 bg-slate-50/50">
+                <div className="p-10 border-r border-lightest-gray space-y-8">
                   <div>
-                    <label className="block text-sm font-bold text-slate-700 mb-2">1. Select Target Dataset</label>
+                    <label className="block text-[14px] font-medium text-cohere-black mb-3">1. Target Dataset</label>
                     <select 
-                      className="w-full p-3 bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none"
+                      className="w-full p-3 bg-snow border border-border-cool rounded-[8px] focus:outline-2 focus:outline-interaction-blue text-[14px] text-near-black appearance-none"
                       value={synthConfig.datasetId}
                       onChange={e => setSynthConfig({...synthConfig, datasetId: e.target.value})}
                     >
@@ -369,44 +438,44 @@ export default function App() {
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-bold text-slate-700 mb-2">2. Architecture Variant (TFM)</label>
+                    <label className="block text-[14px] font-medium text-cohere-black mb-3">2. Architecture Variant</label>
                     <select 
-                      className="w-full p-3 bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none"
+                      className="w-full p-3 bg-snow border border-border-cool rounded-[8px] focus:outline-2 focus:outline-interaction-blue text-[14px] text-near-black appearance-none"
                       value={synthConfig.modelId}
                       onChange={e => setSynthConfig({...synthConfig, modelId: e.target.value})}
                     >
-                      {models.map(m => <option key={m.id} value={m.id}>{m.name} ({m.type})</option>)}
+                      {models.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
                     </select>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-bold text-slate-700 mb-2 flex justify-between">
-                      <span>3. Differential Privacy (Epsilon ε)</span>
-                      <span className="text-emerald-600 bg-emerald-100 px-2 rounded">{synthConfig.epsilon.toFixed(1)}</span>
+                    <label className="flex justify-between items-center mb-3">
+                      <span className="text-[14px] font-medium text-cohere-black">3. Privacy (Epsilon ε)</span>
+                      <span className="font-mono text-[12px] bg-snow border border-border-cool px-2 py-1 rounded-sm">{synthConfig.epsilon.toFixed(1)}</span>
                     </label>
                     <input 
                       type="range" min="0.1" max="10.0" step="0.1" 
                       value={synthConfig.epsilon}
                       onChange={e => setSynthConfig({...synthConfig, epsilon: parseFloat(e.target.value)})}
-                      className="w-full accent-emerald-500"
+                      className="w-full accent-cohere-black"
                     />
                   </div>
                 </div>
 
-                <div className="p-8 flex flex-col justify-center items-center text-center">
-                   <div className={`w-32 h-32 rounded-full border-4 flex items-center justify-center mb-6 transition-all ${isProcessing ? 'border-amber-500 border-t-amber-200 animate-spin bg-amber-50' : 'border-emerald-500 bg-emerald-50 shadow-inner'}`}>
-                     {!isProcessing ? <Zap className="w-12 h-12 text-emerald-500"/> : <Network className="w-12 h-12 text-amber-500 animate-pulse"/>}
+                <div className="p-10 flex flex-col justify-center items-center text-center bg-snow">
+                   <div className={`w-24 h-24 rounded-[22px] border border-border-cool bg-pure-white flex items-center justify-center mb-8 ${isProcessing ? 'animate-pulse' : ''}`}>
+                     {!isProcessing ? <Zap className="w-8 h-8 text-cohere-black"/> : <Network className="w-8 h-8 text-interaction-blue"/>}
                    </div>
-                   <h3 className="text-xl font-bold mb-2">{isProcessing ? "Training Foundation Model..." : "Ready to Deploy"}</h3>
-                   <p className="text-slate-500 text-sm mb-6 max-w-xs">
+                   <h3 className="text-[20px] font-sans font-medium text-cohere-black mb-3">{isProcessing ? "Training Foundation Model..." : "Ready to Deploy"}</h3>
+                   <p className="text-[14px] text-muted-slate mb-8 max-w-xs">
                      PDPL regulations mathematically guaranteed up to Epsilon bound {synthConfig.epsilon}.
                    </p>
                    <button 
                      disabled={isProcessing}
                      onClick={startSynthesis} 
-                     className={`w-full py-4 rounded-xl font-bold text-white shadow-xl flex justify-center items-center space-x-2 transition-all ${isProcessing ? 'bg-slate-400' : 'bg-slate-900 hover:bg-slate-800 hover:scale-105 shadow-slate-900/20'}`}
+                     className={`w-full py-4 rounded-[8px] font-medium flex justify-center items-center space-x-2 text-[14px] transition-all ${isProcessing ? 'bg-border-cool text-muted-slate' : 'bg-cohere-black text-pure-white hover:opacity-90'}`}
                    >
-                     {isProcessing ? <span>Processing Queue...</span> : <><Play className="w-5 h-5"/> <span>Execute Job Queue</span></>}
+                     {isProcessing ? <span>Processing Queue...</span> : <><Play className="w-4 h-4"/> <span>Execute Job Queue</span></>}
                    </button>
                 </div>
               </div>
@@ -416,19 +485,27 @@ export default function App() {
 
         {/* VIEW: Model Registry */}
         {studioView === 'models' && (
-          <div className="animate-in fade-in">
-            <h2 className="text-3xl font-bold mb-2">Model Registry</h2>
-            <p className="text-slate-500 mb-8">Fleet of Foundation Models available for synthesis drops.</p>
+          <div className="animate-in fade-in max-w-5xl mx-auto">
+            <div className="mb-10">
+              <h2 className="text-[32px] font-display font-medium tracking-[-0.32px] text-cohere-black mb-2">Model Registry</h2>
+              <p className="text-[16px] text-muted-slate">Fleet of Foundation Models available for synthesis drops.</p>
+            </div>
             
             <div className="grid md:grid-cols-3 gap-6">
               {models.map(m => (
-                <div key={m.id} className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
-                  <div className="w-12 h-12 bg-slate-100 rounded-lg flex items-center justify-center mb-4"><Network className="text-emerald-600"/></div>
-                  <h4 className="text-lg font-bold text-slate-800">{m.name}</h4>
-                  <p className="text-xs font-semibold text-emerald-600 mb-4">{m.type}</p>
-                  <div className="space-y-2 text-sm text-slate-600">
-                    <div className="flex justify-between"><span>Compute Latency:</span> <strong>{m.latency}</strong></div>
-                    <div className="flex justify-between"><span>Privacy Baseline:</span> <strong>{m.privacy}</strong></div>
+                <div key={m.id} className="bg-pure-white p-8 rounded-[22px] border border-lightest-gray hover:border-border-cool transition-colors">
+                  <div className="font-mono text-[12px] uppercase tracking-[0.28px] text-muted-slate mb-4">{m.type}</div>
+                  <h4 className="text-[20px] font-sans font-medium text-cohere-black mb-6">{m.name}</h4>
+                  
+                  <div className="space-y-3 text-[14px] text-near-black border-t border-lightest-gray pt-6">
+                    <div className="flex justify-between">
+                      <span className="text-muted-slate">Latency</span> 
+                      <span className="font-medium">{m.latency}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-slate">Privacy Baseline</span> 
+                      <span className="font-medium">{m.privacy}</span>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -438,31 +515,32 @@ export default function App() {
 
         {/* VIEW: Evaluation Audit */}
         {studioView === 'reports' && (
-          <div className="animate-in fade-in">
-            <h2 className="text-3xl font-bold mb-2">Evaluation Audit</h2>
-            <p className="text-slate-500 mb-8">Statistical teardown of generated artifacts (TSTR & DCR).</p>
+          <div className="animate-in fade-in max-w-5xl mx-auto">
+            <div className="mb-10">
+              <h2 className="text-[32px] font-display font-medium tracking-[-0.32px] text-cohere-black mb-2">Evaluation Audit</h2>
+              <p className="text-[16px] text-muted-slate">Statistical teardown of generated artifacts.</p>
+            </div>
             
             {reports.length === 0 ? (
-              <div className="text-center p-12 bg-white rounded-xl border border-slate-200">
-                <BarChart3 className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-                <p className="text-slate-500">No jobs completed yet in this session.</p>
-                <button onClick={() => setStudioView('synthesis')} className="mt-4 text-emerald-600 font-semibold hover:underline">Go to Studio</button>
+              <div className="text-center p-16 bg-pure-white rounded-[22px] border border-lightest-gray">
+                <p className="text-[16px] text-muted-slate">No telemetry recorded in this session.</p>
               </div>
             ) : (
               <div className="space-y-8">
                 {reports.map((rep, idx) => {
                   const radarData = [
-                    { metric: 'Kolmogorov-Smirnov', A: rep.metrics.ksTest, fullMark: 100 },
-                    { metric: 'Test-on-Synthetic (TSTR)', A: rep.metrics.tstr, fullMark: 100 },
-                    { metric: 'Privacy Distance (DCR)', A: Math.min(rep.metrics.dcr * 300, 100), fullMark: 100 },
+                    { metric: 'Utility (KS)', A: rep.metrics.ksTest, fullMark: 100 },
+                    { metric: 'ML (TSTR)', A: rep.metrics.tstr, fullMark: 100 },
+                    { metric: 'Privacy (DCR)', A: Math.min(rep.metrics.dcr * 300, 100), fullMark: 100 },
                   ];
 
                   return(
-                  <div key={idx} className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                    <div className="bg-slate-900 text-white p-6 flex justify-between items-center">
+                  <div key={idx} className="bg-pure-white rounded-[22px] border border-border-cool overflow-hidden">
+                    {/* Header - Ghost Button Usage */}
+                    <div className="p-8 border-b border-lightest-gray flex justify-between items-center bg-snow">
                        <div>
-                         <h4 className="text-xl font-bold mb-1">Execution Report: {rep.id}</h4>
-                         <p className="text-slate-400 text-sm">Base: {rep.datasetName} • Engine: {rep.config.modelName} • ε={rep.config.epsilon}</p>
+                         <h4 className="text-[20px] font-sans font-medium text-cohere-black mb-2">Report: {rep.id}</h4>
+                         <p className="text-[14px] text-muted-slate">Dataset: {rep.datasetName} • Engine: {rep.config.modelName} • Epsilon: {rep.config.epsilon}</p>
                        </div>
                        <button onClick={() => {
                           const csvContent = '\uFEFF' + rep.headers.join(',') + '\n' + rep.synthetic.map(r => r.join(',')).join('\n');
@@ -475,50 +553,49 @@ export default function App() {
                           document.body.appendChild(link);
                           link.click();
                           document.body.removeChild(link);
-                       }} className="bg-emerald-500 hover:bg-emerald-600 px-4 py-2 rounded-lg font-bold flex items-center space-x-2 text-sm shadow-lg shadow-emerald-500/20">
+                       }} className="bg-transparent text-cohere-black hover:text-interaction-blue px-4 py-2 font-medium flex items-center space-x-2 text-[14px] border border-transparent hover:border-interaction-blue rounded-[8px] transition-colors">
                          <Download className="w-4 h-4"/> <span>Download Asset</span>
                        </button>
                     </div>
                     
-                    <div className="grid md:grid-cols-3 border-b border-slate-100">
-                      <div className="p-6 border-r border-slate-100 text-center">
-                        <div className="text-3xl font-black text-emerald-500 mb-1">{rep.metrics.ksTest}%</div>
-                        <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">KS Utility Fidelity</div>
+                    <div className="grid md:grid-cols-3 border-b border-lightest-gray">
+                      <div className="p-8 border-r border-lightest-gray">
+                        <div className="font-mono text-[12px] uppercase tracking-[0.28px] text-muted-slate mb-2">KS Utility</div>
+                        <div className="text-[32px] font-display font-medium">{rep.metrics.ksTest}%</div>
                       </div>
-                      <div className="p-6 border-r border-slate-100 text-center">
-                        <div className="text-3xl font-black text-blue-500 mb-1">{rep.metrics.tstr}%</div>
-                        <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">ML Retrain Score (TSTR)</div>
+                      <div className="p-8 border-r border-lightest-gray">
+                        <div className="font-mono text-[12px] uppercase tracking-[0.28px] text-muted-slate mb-2">TSTR Score</div>
+                        <div className="text-[32px] font-display font-medium text-interaction-blue">{rep.metrics.tstr}%</div>
                       </div>
-                      <div className="p-6 text-center">
-                        <div className="text-3xl font-black text-purple-500 mb-1">{rep.metrics.dcr}x</div>
-                        <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">Nearest Neighbor DCR</div>
+                      <div className="p-8">
+                        <div className="font-mono text-[12px] uppercase tracking-[0.28px] text-muted-slate mb-2">Privacy DCR</div>
+                        <div className="text-[32px] font-display font-medium text-near-black">{rep.metrics.dcr}x</div>
                       </div>
                     </div>
 
-                    <div className="grid md:grid-cols-2 p-6 gap-8">
-                       <div className="h-64">
-                         <h5 className="font-bold text-slate-700 text-center mb-4">Multi-Dimensional Efficacy</h5>
+                    <div className="grid md:grid-cols-2 p-8 gap-10">
+                       <div className="h-64 border border-lightest-gray rounded-[16px] p-4 bg-snow">
                          <ResponsiveContainer width="100%" height="100%">
-                            <RadarChart cx="50%" cy="50%" outerRadius="80%" data={radarData}>
-                              <PolarGrid stroke="#e2e8f0" />
-                              <PolarAngleAxis dataKey="metric" tick={{fill: '#64748b', fontSize: 12}} />
+                            <RadarChart cx="50%" cy="50%" outerRadius="70%" data={radarData}>
+                              <PolarGrid stroke="#d9d9dd" />
+                              <PolarAngleAxis dataKey="metric" tick={{fill: '#93939f', fontSize: 12, fontFamily: 'JetBrains Mono'}} />
                               <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false}/>
-                              <Radar name="Score" dataKey="A" stroke="#10b981" fill="#10b981" fillOpacity={0.4} />
-                              <Tooltip/>
+                              <Radar name="Score" dataKey="A" stroke="#000000" fill="#000000" fillOpacity={0.1} />
                             </RadarChart>
                           </ResponsiveContainer>
                        </div>
+                       
                        <div>
-                         <h5 className="font-bold text-slate-700 mb-4">Sample Output Telemetry</h5>
-                         <div className="overflow-x-auto border border-slate-200 rounded-lg">
-                            <table className="w-full text-left text-sm whitespace-nowrap">
-                              <thead className="bg-slate-50 text-slate-500">
-                                <tr>{rep.headers.slice(0,4).map((h, i) => <th key={i} className="p-2 border-b">{h}</th>)}</tr>
+                         <h5 className="font-mono text-[12px] uppercase tracking-[0.28px] text-muted-slate mb-4">Sample Output Row</h5>
+                         <div className="border border-border-cool rounded-[16px] overflow-hidden">
+                            <table className="w-full text-left text-[14px]">
+                              <thead className="bg-snow border-b border-border-cool">
+                                <tr>{rep.headers.slice(0,3).map((h, i) => <th key={i} className="p-4 font-mono text-[12px] text-muted-slate uppercase font-normal">{h}</th>)}</tr>
                               </thead>
                               <tbody>
-                                {rep.synthetic.slice(0, 5).map((row, rIdx) => (
-                                  <tr key={rIdx} className="border-b last:border-0 hover:bg-slate-50/50">
-                                    {row.slice(0,4).map((c, cIdx) => <td key={cIdx} className="p-2">{c}</td>)}
+                                {rep.synthetic.slice(0, 3).map((row, rIdx) => (
+                                  <tr key={rIdx} className="border-b last:border-0 border-lightest-gray bg-pure-white">
+                                    {row.slice(0,3).map((c, cIdx) => <td key={cIdx} className="p-4 text-near-black">{c}</td>)}
                                   </tr>
                                 ))}
                               </tbody>
