@@ -586,17 +586,27 @@ export default function App() {
                        </div>
                        
                        <div>
-                         <h5 className="font-mono text-[12px] uppercase tracking-[0.28px] text-muted-slate mb-4">Sample Output Row</h5>
+                         <h5 className="font-mono text-[12px] uppercase tracking-[0.28px] text-muted-slate mb-4">Sample Before/After Extraction</h5>
                          <div className="border border-border-cool rounded-[16px] overflow-hidden">
                             <table className="w-full text-left text-[14px]">
                               <thead className="bg-snow border-b border-border-cool">
-                                <tr>{rep.headers.slice(0,3).map((h, i) => <th key={i} className="p-4 font-mono text-[12px] text-muted-slate uppercase font-normal">{h}</th>)}</tr>
+                                <tr>
+                                  <th className="p-4 font-mono text-[12px] text-muted-slate uppercase font-normal w-1/4">Status</th>
+                                  {rep.headers.slice(0,3).map((h, i) => <th key={i} className="p-4 font-mono text-[12px] text-muted-slate uppercase font-normal">{h}</th>)}
+                                </tr>
                               </thead>
                               <tbody>
-                                {rep.synthetic.slice(0, 3).map((row, rIdx) => (
-                                  <tr key={rIdx} className="border-b last:border-0 border-lightest-gray bg-pure-white">
-                                    {row.slice(0,3).map((c, cIdx) => <td key={cIdx} className="p-4 text-near-black">{c}</td>)}
-                                  </tr>
+                                {rep.synthetic.slice(0, 2).map((row, rIdx) => (
+                                  <React.Fragment key={rIdx}>
+                                    <tr className="border-b border-lightest-gray bg-[#fafafa]">
+                                      <td className="px-4 py-3 text-[12px] font-mono text-muted-slate"><span className="px-2 py-1 border border-border-cool rounded-sm bg-pure-white">Original</span></td>
+                                      {rep.original[rIdx].slice(0,3).map((c, cIdx) => <td key={cIdx} className="px-4 py-3 text-muted-slate line-through decoration-muted-slate/30">{c}</td>)}
+                                    </tr>
+                                    <tr className="border-b-[2px] last:border-0 border-border-cool bg-pure-white">
+                                      <td className="px-4 py-3 text-[12px] font-mono font-medium text-interaction-blue"><span className="px-2 py-1 bg-[#1863dc10] rounded-sm flex items-center w-max"><Zap className="w-3 h-3 mr-1"/> Synthetic</span></td>
+                                      {row.slice(0,3).map((c, cIdx) => <td key={cIdx} className="px-4 py-3 text-cohere-black font-medium">{c}</td>)}
+                                    </tr>
+                                  </React.Fragment>
                                 ))}
                               </tbody>
                             </table>
