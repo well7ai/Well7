@@ -9,23 +9,44 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 
 // --- SMART LOGICAL ENGINE (Correlated Synthetic Data Generator) ---
 const LocalSaudiFaker = {
-  SAUDI_FIRST_NAMES: ['Ahmad', 'Mohammed', 'Ali', 'Omar', 'Abdullah', 'Faisal', 'Saud', 'Khalid', 'Fatima', 'Noura', 'Sara', 'Reem', 'Yousef', 'Maha', 'Layan'],
-  SAUDI_LAST_NAMES: ['Al-Saud', 'Al-Rajhi', 'Al-Nasser', 'Al-Dosari', 'Al-Otaibi', 'Al-Qahtani', 'Al-Ghamdi', 'Al-Zahrani', 'Al-Harbi', 'Al-Mutairi'],
-  EXPAT_FIRST_NAMES: ['John', 'Michael', 'David', 'Sarah', 'Jessica', 'Tariq', 'Zayn', 'Rahul', 'Farhan', 'Syed', 'Maria', 'Ade'],
-  EXPAT_LAST_NAMES: ['Smith', 'Johnson', 'Williams', 'Khan', 'Ahmed', 'Ali', 'Garcia', 'Martinez', 'Chen', 'Wang'],
-  CITIES: ['Riyadh', 'Jeddah', 'Dammam', 'Mecca', 'Medina', 'Khobar', 'Tabuk', 'Abha'],
+  MALE_FIRST: ["Mohammed","Abdullah","Abdulrahman","Ahmad","Khalid","Ali","Omar","Yousef","Saad","Fahad","Nasser","Sultan","Turki","Bander","Rashid","Majed","Waleed","Hani","Ziyad","Bader"],
+  FEMALE_FIRST: ["Noura","Sara","Reem","Hind","Latifa","Muna","Ameera","Rana","Dana","Lina","Maryam","Fatima","Aisha","Rahaf","Ghada","Shaima","Wafaa","Asma","Hessa","Jawaher"],
+  LAST_NAMES: ["Al-Ghamdi","Al-Omari","Al-Zahrani","Al-Shehri","Al-Qahtani","Al-Dosari","Al-Otaibi","Al-Malki","Al-Harbi","Al-Shammari","Al-Subaie","Al-Anazi"],
+  EXPAT_FIRST: ['John', 'Michael', 'David', 'Sarah', 'Jessica', 'Tariq', 'Zayn', 'Rahul', 'Farhan', 'Syed', 'Maria', 'Ade'],
+  EXPAT_LAST: ['Smith', 'Johnson', 'Williams', 'Khan', 'Ahmed', 'Ali', 'Garcia', 'Martinez', 'Chen', 'Wang'],
+  CITIES: ['Riyadh', 'Jeddah', 'Dammam', 'Makkah', 'Madinah', 'Khobar', 'Tabuk', 'Abha', 'Buraidah'],
+  PHONE_PREFIXES: ["0512","0513","0514","0515","0532","0533","0534","0535","0542","0543","0544","0552","0553","0554","0555","0566"],
+
+  generateName: (isSaudi, gender = null) => {
+    if (!isSaudi) return `${LocalSaudiFaker.EXPAT_FIRST[Math.floor(Math.random() * LocalSaudiFaker.EXPAT_FIRST.length)]} ${LocalSaudiFaker.EXPAT_LAST[Math.floor(Math.random() * LocalSaudiFaker.EXPAT_LAST.length)]}`;
+    const gndr = gender || (Math.random() > 0.5 ? 'M' : 'F');
+    const first = gndr === 'M' ? LocalSaudiFaker.MALE_FIRST[Math.floor(Math.random() * LocalSaudiFaker.MALE_FIRST.length)] : LocalSaudiFaker.FEMALE_FIRST[Math.floor(Math.random() * LocalSaudiFaker.FEMALE_FIRST.length)];
+    const last = LocalSaudiFaker.LAST_NAMES[Math.floor(Math.random() * LocalSaudiFaker.LAST_NAMES.length)];
+    return `${first} ${last}`;
+  },
   
-  generateName: (isSaudi) => {
-    if (isSaudi) return `${LocalSaudiFaker.SAUDI_FIRST_NAMES[Math.floor(Math.random() * LocalSaudiFaker.SAUDI_FIRST_NAMES.length)]} ${LocalSaudiFaker.SAUDI_LAST_NAMES[Math.floor(Math.random() * LocalSaudiFaker.SAUDI_LAST_NAMES.length)]}`;
-    return `${LocalSaudiFaker.EXPAT_FIRST_NAMES[Math.floor(Math.random() * LocalSaudiFaker.EXPAT_FIRST_NAMES.length)]} ${LocalSaudiFaker.EXPAT_LAST_NAMES[Math.floor(Math.random() * LocalSaudiFaker.EXPAT_LAST_NAMES.length)]}`;
-  },
   generateNationalId: (isSaudi) => {
-    let id = isSaudi ? '1' : '2';
-    for (let i=0; i<9; i++) id += Math.floor(Math.random()*10).toString();
-    return id;
+    // Implement exact structural Modulo-10 checksum logic from the Python file
+    const type = isSaudi ? '1' : '2';
+    const region = Math.floor(Math.random() * 9) + 1; // 1-9
+    const middle = Array.from({length: 7}, () => Math.floor(Math.random() * 10)).join('');
+    const base = type + region.toString() + middle;
+    
+    let sum = 0;
+    for (let i = 0; i < base.length; i++) {
+        let n = parseInt(base[i]);
+        if (i % 2 === 0) {
+            n *= 2;
+            if (n > 9) n -= 9;
+        }
+        sum += n;
+    }
+    const check = (10 - (sum % 10)) % 10;
+    return base + check.toString();
   },
-  generatePhone: () => '05' + Array.from({length:8}, () => Math.floor(Math.random()*10)).join(''),
-  generateIban: () => 'SA' + Array.from({length:22}, () => Math.floor(Math.random()*10)).join(''),
+  
+  generatePhone: () => LocalSaudiFaker.PHONE_PREFIXES[Math.floor(Math.random() * LocalSaudiFaker.PHONE_PREFIXES.length)] + Array.from({length:6}, () => Math.floor(Math.random()*10)).join(''),
+  generateIban: () => `SA${Math.floor(Math.random()*90)+10}65` + Array.from({length:18}, () => Math.floor(Math.random()*10)).join(''),
   generateAddress: () => `${Math.floor(Math.random()*9000)+1000} King Fahd Rd, ${LocalSaudiFaker.CITIES[Math.floor(Math.random()*LocalSaudiFaker.CITIES.length)]}`,
   calculateBirthdate: (age) => {
     const dobY = new Date().getFullYear() - parseInt(age);
