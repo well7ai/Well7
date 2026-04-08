@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { 
-  Database, Activity, Shield, Network, Zap, 
+  Database, Activity, Shield, Network, Zap, ArrowRight,
   Files, BarChart3, UploadCloud, ChevronRight, 
   AlertTriangle, CheckCircle2, Download, Play, LayoutDashboard
 } from 'lucide-react';
@@ -194,88 +194,79 @@ export default function App() {
     return (
       <div className="min-h-screen bg-pure-white font-sans text-near-black">
         {/* Navigation */}
-        <nav className="bg-pure-white text-cohere-black p-6 border-b border-lightest-gray sticky top-0 z-50">
-          <div className="max-w-7xl mx-auto flex justify-between items-center">
-            <div className="flex items-center space-x-2">
-              <Database className="text-cohere-black w-6 h-6" />
-              <span className="text-2xl font-display font-medium tracking-tight">Well7</span>
+        <nav className="fixed top-0 w-full z-50 border-b border-[#ffffff1a] bg-[#0a0a0fcc] backdrop-blur-[20px] transition-all">
+          <div className="max-w-7xl mx-auto p-6 flex justify-between items-center">
+            <div className="flex items-center space-x-3">
+              <Database className="text-white w-6 h-6" />
+              <span className="text-[22px] font-sans font-medium tracking-tight text-white">Well7</span>
             </div>
             <div className="space-x-4 flex items-center">
-              <button 
-                onClick={() => setActiveTab('studio')}
-                className="bg-transparent text-cohere-black hover:text-interaction-blue px-4 py-2 font-medium transition-colors text-[14px]"
-              >
-                Access Data Studio
+              <button onClick={() => setActiveTab('studio')} className="text-white/80 hover:text-white px-4 py-2 text-[15px] transition-colors rounded-md hover:bg-white/5">
+                Studio
               </button>
               <button 
                 onClick={() => setActiveTab('studio')}
-                className="bg-cohere-black text-pure-white px-5 py-2.5 rounded-full font-medium hover:opacity-90 transition-opacity text-[14px]"
+                className="bg-gradient-to-r from-[#707cff] to-[#b100ff] text-white px-6 py-2.5 rounded-[8px] font-medium hover:opacity-90 transition-opacity text-[15px] shadow-[inset_6px_0_12px_rgba(255,255,255,0.22)] flex items-center space-x-2"
               >
-                Launch Studio
+                <span>Start a discovery session</span>
+                <ArrowRight className="w-4 h-4 ml-1" />
               </button>
             </div>
           </div>
         </nav>
 
-        {/* Hero Band (Deep Purple / Dark) */}
-        <section className="bg-deep-dark text-pure-white pt-32 pb-40">
-          <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
-            <div>
-              <div className="mb-8 font-mono text-[14px] uppercase tracking-[0.28px] text-muted-slate">
-                Saudi Vision 2030 Aligned Infrastructure
-              </div>
-              <h1 className="text-[60px] lg:text-[72px] font-display font-medium leading-[1.0] tracking-[-1.44px] mb-8 text-pure-white">
-                Enterprise data,<br/>protected securely.
+        {/* NEWERA Hero Section */}
+        <section className="relative pt-48 pb-32 overflow-hidden bg-[#0a0a0f]">
+          {/* Ambient Glows */}
+          <div className="absolute top-1/2 left-1/4 -translate-y-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-[#9824f9] rounded-full blur-[150px] opacity-20 pointer-events-none"></div>
+          <div className="absolute top-1/2 right-0 -translate-y-1/2 translate-x-1/4 w-[600px] h-[600px] bg-[#1863dc] rounded-full blur-[150px] opacity-20 pointer-events-none"></div>
+          
+          <div className="max-w-7xl mx-auto px-6 relative z-10 grid lg:grid-cols-2 gap-16 items-center">
+            
+            <div className="max-w-2xl">
+              <h1 className="text-[70px] lg:text-[80px] font-sans font-medium leading-[1.0] tracking-[-2.4px] mb-6 text-white">
+                AI that works.<br/>Built for your<br/>enterprise.
               </h1>
-              <p className="text-[18px] text-muted-slate mb-12 max-w-lg leading-[1.4] font-sans">
-                The Privacy-Safe Data Layer for Saudi AI. Deploy state-of-the-art foundation models to transform sensitive records into reverse-engineering proof safe data clones.
+              <p className="text-[18px] text-[#e2e2ea] mb-12 max-w-lg leading-[1.6] font-sans font-light">
+                Well7 helps government and enterprise teams move from PoCs to production. We generate mathematically guaranteed safe-data clones inside secure, isolated environments within weeks.
               </p>
-              <button onClick={() => setActiveTab('studio')} className="bg-pure-white text-cohere-black px-8 py-4 rounded-full font-medium flex items-center space-x-2 hover:bg-snow transition-colors">
-                <LayoutDashboard className="w-5 h-5"/>
-                <span>Launch Enterprise Studio</span>
-              </button>
+              
+              <div className="flex items-center space-x-4">
+                <button onClick={() => setActiveTab('studio')} className="bg-gradient-to-r from-[#707cff] to-[#b100ff] text-white px-6 py-4 rounded-[8px] font-medium hover:opacity-90 transition-opacity text-[16px] shadow-[inset_6px_0_12px_rgba(255,255,255,0.22)] flex items-center space-x-2">
+                  <span>Start a discovery session</span>
+                  <ArrowRight className="w-5 h-5 ml-1" />
+                </button>
+                <button onClick={() => setActiveTab('studio')} className="bg-[#1b1b22] text-white border border-[#ffffff1a] px-6 py-4 rounded-[8px] font-medium hover:bg-[#2a2a35] transition-colors text-[16px]">
+                  Explore our platform
+                </button>
+              </div>
+            </div>
+
+            <div className="relative flex justify-center items-center">
+               <img src="/newera_hero_graphic.png" alt="3D Abstract AI Nodes" className="w-[110%] max-w-[650px] object-cover scale-110 drop-shadow-2xl mix-blend-screen" />
             </div>
             
-            {/* Dark Graph Card */}
-            <div className="bg-near-black p-8 rounded-[22px] border border-cohere-black">
-              <h3 className="text-[20px] font-sans mb-6 flex items-center text-snow">
-                <Activity className="w-5 h-5 mr-3 text-muted-slate"/> 
-                Tradeoff Analysis (KS vs DCR)
-              </h3>
-              <div className="h-64 w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={marketingDemoData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#333333" vertical={false} />
-                    <XAxis dataKey="name" stroke="#93939f" axisLine={false} tickLine={false} />
-                    <YAxis stroke="#93939f" axisLine={false} tickLine={false} />
-                    <Tooltip contentStyle={{backgroundColor: '#000000', border: 'none', borderRadius: '4px', color: '#fff'}} />
-                    <Legend iconType="circle" />
-                    <Line type="monotone" dataKey="utility" stroke="#ffffff" strokeWidth={2} name="Utility (KS Test)" dot={{ r: 4 }} activeDot={{ r: 6 }} />
-                    <Line type="monotone" dataKey="privacy" stroke="#1863dc" strokeWidth={2} name="Privacy (DCR)" dot={{ r: 4 }} activeDot={{ r: 6 }} />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
           </div>
         </section>
 
-        {/* The Problem We Solve (White Canvas) */}
-        <section className="py-32 bg-pure-white border-b border-lightest-gray">
-          <div className="max-w-4xl mx-auto px-6">
-            <div className="font-mono text-[14px] uppercase tracking-[0.28px] text-muted-slate mb-6 text-center">
+        {/* The Problem We Solve (Dark Canvas) */}
+        <section className="py-32 bg-[#0a0a0f] relative overflow-hidden">
+          <div className="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-[#ffffff1a] to-transparent"></div>
+          <div className="max-w-4xl mx-auto px-6 relative z-10">
+            <div className="text-[14px] uppercase tracking-[2px] text-[#707cff] mb-6 text-center font-medium">
               The Architecture Bottleneck
             </div>
-            <h2 className="text-[48px] font-display font-medium leading-[1.2] tracking-[-0.48px] text-cohere-black mb-10 text-center">
+            <h2 className="text-[48px] font-sans font-medium leading-[1.1] tracking-[-1px] text-white mb-10 text-center">
               The Problem: Locked Data
             </h2>
-            <p className="text-[18px] text-near-black leading-[1.5] text-center mb-12">
+            <p className="text-[20px] text-[#e2e2ea] leading-[1.6] text-center mb-12 font-light">
               Today, organizations are sitting on a goldmine of valuable information, from banking transactions to patient health records. But there’s a catch. Strict privacy laws like the Saudi PDPL and global GDPR make it highly risky to share this real data with the people who need it most: AI developers, internal teams, and external partners.
             </p>
-            <div className="p-10 bg-snow rounded-[22px] border border-border-cool">
-               <p className="text-[18px] text-near-black leading-[1.5] text-center mb-6">
-                 Because of the fear of massive fines and data breaches, companies simply lock their data away in a vault. We call this the <strong>Locked Data</strong> problem.
+            <div className="p-12 bg-[#ffffff03] rounded-[24px] border border-[#ffffff0a] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)] backdrop-blur-xl">
+               <p className="text-[18px] text-[#e2e2ea] leading-[1.6] text-center mb-6 font-light shrink-0">
+                 Because of the fear of massive fines and data breaches, companies simply lock their data away in a vault. We call this the <strong className="text-white font-medium">Locked Data</strong> problem.
                </p>
-               <p className="text-[18px] text-near-black leading-[1.5] text-center">
+               <p className="text-[18px] text-[#e2e2ea] leading-[1.6] text-center font-light">
                  When data is locked, innovation stops. Teams can't build smart AI models or test new software because they are starved of real-world information. To make matters worse, the old methods of hiding data just aren't strong enough anymore to stop modern cyber attacks.
                </p>
             </div>
@@ -283,43 +274,45 @@ export default function App() {
         </section>
 
         {/* Why It's Needed (Snow Canvas) */}
-        <section className="py-32 bg-snow border-b border-lightest-gray">
+        <section className="py-32 bg-[#0d0d14] relative">
           <div className="max-w-4xl mx-auto px-6 text-center">
-            <div className="font-mono text-[14px] uppercase tracking-[0.28px] text-muted-slate mb-6 text-center">
+            <div className="text-[14px] uppercase tracking-[2px] text-[#b100ff] mb-6 text-center font-medium">
               The Mathematical Solution
             </div>
-            <h2 className="text-[48px] font-display font-medium leading-[1.2] tracking-[-0.48px] text-cohere-black mb-10 text-center">
+            <h2 className="text-[48px] font-sans font-medium leading-[1.1] tracking-[-1px] text-white mb-10 text-center">
               Why Data Protection is the Solution
             </h2>
-            <p className="text-[18px] text-near-black leading-[1.5] mb-8">
-              Developing advanced AI requires substantial volumes of data. Data protection models offer a mathematical guarantee of privacy while preserving <strong>100% of the statistical utility</strong> found in the original dataset.
+            <p className="text-[20px] text-[#e2e2ea] leading-[1.6] mb-8 font-light">
+              Developing advanced AI requires substantial volumes of data. Data protection models offer a mathematical guarantee of privacy while preserving <strong className="text-white font-medium">100% of the statistical utility</strong> found in the original dataset.
             </p>
-            <p className="text-[18px] text-near-black leading-[1.5]">
+            <p className="text-[20px] text-[#e2e2ea] leading-[1.6] font-light">
               This approach is essential to facilitate secure cross-border data sharing, accelerate AI model training, enable safe third-party software testing, and unlock the value of internal datasets. All without exposing any real individual's private information.
             </p>
           </div>
         </section>
 
-        {/* Core Tech (White Canvas, Multi-Column) */}
-        <section className="py-32 bg-pure-white max-w-7xl mx-auto px-6">
-            <h2 className="text-[48px] font-display font-medium leading-[1.2] tracking-[-0.48px] text-cohere-black mb-16 text-center">
+        {/* Core Tech (Multi-Column) */}
+        <section className="py-32 bg-[#0a0a0f] max-w-7xl mx-auto px-6 relative">
+            <div className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 w-[1000px] h-[400px] bg-[#707cff] rounded-full blur-[200px] opacity-[0.08] pointer-events-none"></div>
+            
+            <h2 className="text-[48px] font-sans font-medium leading-[1.1] tracking-[-1px] text-white mb-16 text-center relative z-10">
               The Core Technology
             </h2>
-            <div className="grid md:grid-cols-3 gap-8">
-              <div className="bg-pure-white p-10 rounded-[22px] border border-border-cool hover:border-interaction-blue transition-colors duration-300">
-                <Network className="text-cohere-black w-8 h-8 mb-8" />
-                <h3 className="text-[24px] font-sans mb-4 text-cohere-black">Multi-Model Substrate</h3>
-                <p className="text-[16px] text-muted-slate leading-[1.5]">Access proprietary models including Saudi TFMs, TabTreeFormer, and CTAB-GAN-DP for specific deployment needs.</p>
+            <div className="grid md:grid-cols-3 gap-8 relative z-10">
+              <div className="bg-[#1b1b22] p-10 rounded-[24px] border border-[#ffffff0a] hover:border-[#707cff]/50 transition-colors duration-500 shadow-2xl">
+                <Network className="text-[#707cff] w-8 h-8 mb-8" />
+                <h3 className="text-[24px] font-sans mb-4 text-white font-medium">Multi-Model Substrate</h3>
+                <p className="text-[16px] text-[#8f8f9d] leading-[1.6] font-light">Access proprietary models including Saudi TFMs, TabTreeFormer, and CTAB-GAN-DP for specific deployment needs.</p>
               </div>
-              <div className="bg-pure-white p-10 rounded-[22px] border border-border-cool hover:border-interaction-blue transition-colors duration-300">
-                <Activity className="text-cohere-black w-8 h-8 mb-8" />
-                <h3 className="text-[24px] font-sans mb-4 text-cohere-black">Kolmogorov-Smirnov Utility</h3>
-                <p className="text-[16px] text-muted-slate leading-[1.5]">Preserve exact schemas and statistical utility proving Machine Learning Test-on-Safe-Data reliability.</p>
+              <div className="bg-[#1b1b22] p-10 rounded-[24px] border border-[#ffffff0a] hover:border-[#b100ff]/50 transition-colors duration-500 shadow-2xl">
+                <Activity className="text-[#b100ff] w-8 h-8 mb-8" />
+                <h3 className="text-[24px] font-sans mb-4 text-white font-medium">Kolmogorov-Smirnov Utility</h3>
+                <p className="text-[16px] text-[#8f8f9d] leading-[1.6] font-light">Preserve exact schemas and statistical utility proving Machine Learning Test-on-Safe-Data reliability.</p>
               </div>
-              <div className="bg-pure-white p-10 rounded-[22px] border border-border-cool hover:border-interaction-blue transition-colors duration-300">
-                <Shield className="text-cohere-black w-8 h-8 mb-8" />
-                <h3 className="text-[24px] font-sans mb-4 text-cohere-black">PDPL Compliant DCR</h3>
-                <p className="text-[16px] text-muted-slate leading-[1.5]">Mathematical Differential privacy bounding guarantees defense against Linkage Attacks matching Saudi laws.</p>
+              <div className="bg-[#1b1b22] p-10 rounded-[24px] border border-[#ffffff0a] hover:border-[#9824f9]/50 transition-colors duration-500 shadow-2xl">
+                <Shield className="text-[#9824f9] w-8 h-8 mb-8" />
+                <h3 className="text-[24px] font-sans mb-4 text-white font-medium">PDPL Compliant DCR</h3>
+                <p className="text-[16px] text-[#8f8f9d] leading-[1.6] font-light">Mathematical Differential privacy bounding guarantees defense against Linkage Attacks matching Saudi laws.</p>
               </div>
             </div>
         </section>
