@@ -142,6 +142,7 @@ const synthesizeData = (dataset, modelConfig) => {
 export default function App() {
   const [activeTab, setActiveTab] = useState('landing');
   const [studioView, setStudioView] = useState('catalog');
+  const [lang, setLang] = useState('en');
   
   const [datasets, setDatasets] = useState([]);
   const [models] = useState([
@@ -192,24 +193,27 @@ export default function App() {
   ---------------------*/
   if (activeTab === 'landing') {
     return (
-      <div className="min-h-screen bg-pure-white font-sans text-near-black">
+      <div className="min-h-screen bg-[#0a0a0f] font-sans text-white border-none" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
         {/* Navigation */}
         <nav className="fixed top-0 w-full z-50 border-b border-[#ffffff1a] bg-[#0a0a0fcc] backdrop-blur-[20px] transition-all">
           <div className="max-w-7xl mx-auto p-6 flex justify-between items-center">
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-3 gap-x-3">
               <Database className="text-white w-6 h-6" />
               <span className="text-[22px] font-sans font-medium tracking-tight text-white">Well7</span>
             </div>
-            <div className="space-x-4 flex items-center">
-              <button onClick={() => setActiveTab('studio')} className="text-white/80 hover:text-white px-4 py-2 text-[15px] transition-colors rounded-md hover:bg-white/5">
-                Studio
+            <div className="flex items-center gap-x-4">
+              <button onClick={() => setLang(lang === 'en' ? 'ar' : 'en')} className="text-white/80 hover:text-white px-4 py-2 text-[15px] font-medium transition-colors rounded-md hover:bg-white/5 border border-white/10 flex items-center justify-center">
+                {lang === 'en' ? 'العربية' : 'English'}
+              </button>
+              <button onClick={() => setActiveTab('studio')} className="text-white/80 hover:text-white px-4 py-2 text-[15px] font-medium transition-colors rounded-md hover:bg-white/5">
+                {lang === 'ar' ? 'الاستوديو' : 'Studio'}
               </button>
               <button 
                 onClick={() => setActiveTab('studio')}
-                className="bg-gradient-to-r from-[#707cff] to-[#b100ff] text-white px-6 py-2.5 rounded-[8px] font-medium hover:opacity-90 transition-opacity text-[15px] shadow-[inset_6px_0_12px_rgba(255,255,255,0.22)] flex items-center space-x-2"
+                className="bg-gradient-to-r from-[#707cff] to-[#b100ff] text-white px-6 py-2.5 rounded-[8px] font-medium hover:opacity-90 transition-opacity text-[15px] shadow-[inset_6px_0_12px_rgba(255,255,255,0.22)] flex items-center gap-x-1"
               >
-                <span>Start a discovery session</span>
-                <ArrowRight className="w-4 h-4 ml-1" />
+                <span>{lang === 'ar' ? 'ابدأ جلسة الاستكشاف' : 'Start a discovery session'}</span>
+                <ArrowRight className={`w-4 h-4 ${lang === 'ar' ? 'rotate-180' : ''}`} />
               </button>
             </div>
           </div>
@@ -225,19 +229,19 @@ export default function App() {
             
             <div className="max-w-2xl">
               <h1 className="text-[70px] lg:text-[80px] font-sans font-medium leading-[1.0] tracking-[-2.4px] mb-6 text-white">
-                AI that works.<br/>Built for your<br/>enterprise.
+                {lang === 'ar' ? <><span className="block">ذكاء اصطناعي يحافظ على خصوصية عملائك،</span>مُصمم لمؤسستك.</> : <>Privacy-first AI.<br/>Built for your<br/>enterprise.</>}
               </h1>
               <p className="text-[18px] text-[#e2e2ea] mb-12 max-w-lg leading-[1.6] font-sans font-light">
-                Well7 helps government and enterprise teams move from PoCs to production. We generate mathematically guaranteed safe-data clones inside secure, isolated environments within weeks.
+                {lang === 'ar' ? 'تساعد منصة Well7 المؤسسات الحكومية والشركات القيادية على الانتقال من النماذج التجريبية إلى الإنتاج الفعلي. نصنع نسخاً متطابقة من البيانات الآمنة تماماً، بضمان قاطع لتسريع عمليات الذكاء الاصطناعي، ضمن بيئات معزولة.' : 'Well7 helps government and enterprise teams move from PoCs to production. We generate mathematically guaranteed safe-data clones inside secure, isolated environments within weeks.'}
               </p>
               
-              <div className="flex items-center space-x-4">
-                <button onClick={() => setActiveTab('studio')} className="bg-gradient-to-r from-[#707cff] to-[#b100ff] text-white px-6 py-4 rounded-[8px] font-medium hover:opacity-90 transition-opacity text-[16px] shadow-[inset_6px_0_12px_rgba(255,255,255,0.22)] flex items-center space-x-2">
-                  <span>Start a discovery session</span>
-                  <ArrowRight className="w-5 h-5 ml-1" />
+              <div className="flex items-center gap-x-4">
+                <button onClick={() => setActiveTab('studio')} className="bg-gradient-to-r from-[#707cff] to-[#b100ff] text-white px-6 py-4 rounded-[8px] font-medium hover:opacity-90 transition-opacity text-[16px] shadow-[inset_6px_0_12px_rgba(255,255,255,0.22)] flex items-center gap-x-2">
+                  <span>{lang === 'ar' ? 'ابدأ جلسة الاستكشاف' : 'Start a discovery session'}</span>
+                  <ArrowRight className={`w-5 h-5 ${lang === 'ar' ? 'rotate-180' : ''}`} />
                 </button>
                 <button onClick={() => setActiveTab('studio')} className="bg-[#1b1b22] text-white border border-[#ffffff1a] px-6 py-4 rounded-[8px] font-medium hover:bg-[#2a2a35] transition-colors text-[16px]">
-                  Explore our platform
+                  {lang === 'ar' ? 'استكشف منصتنا' : 'Explore our platform'}
                 </button>
               </div>
             </div>
@@ -254,40 +258,82 @@ export default function App() {
           <div className="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-[#ffffff1a] to-transparent"></div>
           <div className="max-w-4xl mx-auto px-6 relative z-10">
             <div className="text-[14px] uppercase tracking-[2px] text-[#707cff] mb-6 text-center font-medium">
-              The Architecture Bottleneck
+              {lang === 'ar' ? 'عنق الزجاجة في البناء الهندسي' : 'The Architecture Bottleneck'}
             </div>
             <h2 className="text-[48px] font-sans font-medium leading-[1.1] tracking-[-1px] text-white mb-10 text-center">
-              The Problem: Locked Data
+              {lang === 'ar' ? 'المشكلة: البيانات المحجوبة والمقيدة' : 'The Problem: Locked Data'}
             </h2>
             <p className="text-[20px] text-[#e2e2ea] leading-[1.6] text-center mb-12 font-light">
-              Today, organizations are sitting on a goldmine of valuable information, from banking transactions to patient health records. But there’s a catch. Strict privacy laws like the Saudi PDPL and global GDPR make it highly risky to share this real data with the people who need it most: AI developers, internal teams, and external partners.
+              {lang === 'ar' ? 'تمتلك اليوم العديد من المنظمات كنزاً ضخماً من المعلومات، ولكنها تواجه قيوداً صارمة للحفاظ على خصوصية العميل. وتجعل التشريعات الصارمة مثل (نظام حماية البيانات الشخصية - PDPL) وقوانين الخصوصية العالمية من تقديم هذه البيانات للمطورين أو الجهات المعنية مغامرة عالية الخطورة.' : 'Today, organizations are sitting on a goldmine of valuable information, but face strict boundaries surrounding the privacy of the client. Strict privacy laws like the Saudi PDPL and global GDPR make it highly risky to share this real data with the people who need it most: AI developers, internal teams, and external partners.'}
             </p>
             <div className="p-12 bg-[#ffffff03] rounded-[24px] border border-[#ffffff0a] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)] backdrop-blur-xl">
                <p className="text-[18px] text-[#e2e2ea] leading-[1.6] text-center mb-6 font-light shrink-0">
-                 Because of the fear of massive fines and data breaches, companies simply lock their data away in a vault. We call this the <strong className="text-white font-medium">Locked Data</strong> problem.
+                 {lang === 'ar' ? <>وبسبب التخوف من اختراق البيانات وفرض غرامات ضخمة، تقوم المجموعات بوضع هذه البيانات في بيئة محصورة تماماً. ما نُشير إليه بمشكلة <strong className="text-white font-medium">البيانات المحجوبة</strong>.</> : <>Because of the fear of massive fines and data breaches, companies simply lock their data away in a vault. We call this the <strong className="text-white font-medium">Locked Data</strong> problem.</>}
                </p>
                <p className="text-[18px] text-[#e2e2ea] leading-[1.6] text-center font-light">
-                 When data is locked, innovation stops. Teams can't build smart AI models or test new software because they are starved of real-world information. To make matters worse, the old methods of hiding data just aren't strong enough anymore to stop modern cyber attacks.
+                 {lang === 'ar' ? 'حين تُحَجَّب البيانات، يتوقف الإبتكار. وتفقد النماذج الذكية والبرمجيات مصدر التطوير لأنها محرومة من البيانات الحقيقية. وما يزيد الطين بلة، أن الطرق القديمة في إخفاء هوية البيانات لم تعد قادرة على إيقاف الهجمات السيبرانية الحديثة.' : 'When data is locked, innovation stops. Teams can\'t build smart AI models or test new software because they are starved of real-world information. To make matters worse, the old methods of hiding data just aren\'t strong enough anymore to stop modern cyber attacks.'}
                </p>
             </div>
           </div>
         </section>
 
-        {/* Why It's Needed (Snow Canvas) */}
-        <section className="py-32 bg-[#0d0d14] relative">
+        {/* Why It's Needed (Snow Canvas / Adjusted for dark theme flow) */}
+        <section className="py-32 bg-[#0d0d14] relative border-y border-[#ffffff1a]">
           <div className="max-w-4xl mx-auto px-6 text-center">
             <div className="text-[14px] uppercase tracking-[2px] text-[#b100ff] mb-6 text-center font-medium">
-              The Mathematical Solution
+              {lang === 'ar' ? 'الحل الرياضي المثبت' : 'The Mathematical Solution'}
             </div>
             <h2 className="text-[48px] font-sans font-medium leading-[1.1] tracking-[-1px] text-white mb-10 text-center">
-              Why Data Protection is the Solution
+              {lang === 'ar' ? 'لماذا حماية البيانات هو الحل الأمثل؟' : 'Why Data Protection is the Solution'}
             </h2>
             <p className="text-[20px] text-[#e2e2ea] leading-[1.6] mb-8 font-light">
-              Developing advanced AI requires substantial volumes of data. Data protection models offer a mathematical guarantee of privacy while preserving <strong className="text-white font-medium">100% of the statistical utility</strong> found in the original dataset.
+              {lang === 'ar' ? <>تتطلب النماذج المتقدمة للذكاء الاصطناعي كميات هائلة من البيانات. تتيح نماذج حماية الخصوصية لدينا بناء ضمانات رياضية تحافظ بشكل قاطع على أمن المعلومات، محتفظة بما يصل إلى <strong className="text-white font-medium">١٠٠٪ من الجودة الإحصائية</strong> للبيانات الأصلية.</> : <>Developing advanced AI requires substantial volumes of data. Data protection models offer a mathematical guarantee of privacy while preserving <strong className="text-white font-medium">100% of the statistical utility</strong> found in the original dataset.</>}
             </p>
             <p className="text-[20px] text-[#e2e2ea] leading-[1.6] font-light">
-              This approach is essential to facilitate secure cross-border data sharing, accelerate AI model training, enable safe third-party software testing, and unlock the value of internal datasets. All without exposing any real individual's private information.
+              {lang === 'ar' ? 'هذا النهج ضروري لتمكين تبادل البيانات عبر المؤسسات، وتفعيل نماذج الذكاء الاصطناعي بشكل آمن، دون المساس بأي بيانات وتفاصيل خاصة بشخصية المستخدم الفعلي.' : 'This approach is essential to facilitate secure cross-border data sharing, accelerate AI model training, enable safe third-party software testing, and unlock the value of internal datasets. All without exposing any real individual\'s private information.'}
             </p>
+          </div>
+        </section>
+
+        {/* APPLIED USE CASES FOR SAUDI SECTORS */}
+        <section className="py-32 bg-[#0a0a0f] relative border-b border-[#ffffff1a] overflow-hidden">
+          <div className="max-w-7xl mx-auto px-6 relative z-10">
+            <div className="text-[14px] uppercase tracking-[2px] text-[#707cff] mb-6 text-center font-medium">
+              {lang === 'ar' ? 'حالات الاستخدام العملية' : 'Applied Use Cases'}
+            </div>
+            <h2 className="text-[48px] font-sans font-medium leading-[1.1] tracking-[-1px] text-white mb-16 text-center">
+              {lang === 'ar' ? 'مصمم لقطاعي الصحة والبنوك في السعودية' : 'Designed for Saudi Health & Finance'}
+            </h2>
+            
+            <div className="grid md:grid-cols-2 gap-12">
+              <div className="p-10 border border-[#ffffff1a] bg-[#ffffff03] rounded-[24px] backdrop-blur-sm hover:bg-[#ffffff08] transition-colors">
+                <div className="p-4 bg-[#b100ff]/20 w-max rounded-[12px] mb-6 border border-[#b100ff]/30">
+                  <Activity className="w-8 h-8 text-[#b100ff]" />
+                </div>
+                <h3 className="text-[24px] font-medium text-white mb-4">
+                  {lang === 'ar' ? 'القطاع الصحي: خصوصية بيانات المرضى' : 'Health Sector: Patient Data Privacy'}
+                </h3>
+                <p className="text-[16px] text-[#e2e2ea] font-light leading-[1.6]">
+                  {lang === 'ar' 
+                    ? <><strong className="text-white">التحدي:</strong> تعجز المستشفيات عن مشاركة البيانات الحقيقية مع شركات التقنية والباحثين والمؤسسات الخارجية بسبب مخاطر الخصوصية، مما يعطل الابتكار الطبي.<br/><strong className="text-white mt-2 block">الحل:</strong> الحل بكل بساطة يوفر لك أعلى معايير الخصوصية عشان تشارك البيانات بأمان مع أي جهة خارجية وتطور أبحاثك، بدون ما تشيل هم خصوصية المرضى أو بياناتهم الشخصية.</>
+                    : <><strong className="text-white">The Challenge:</strong> Hospitals cannot share real data with third-party developers, researchers, or external partners due to privacy risks, stalling medical innovation.<br/><strong className="text-white mt-2 block">The Solution:</strong> Our solution prioritizes total privacy, enabling you to share data securely with any external party for training and research without ever worrying about patient confidentiality.</>}
+                </p>
+              </div>
+
+              <div className="p-10 border border-[#ffffff1a] bg-[#ffffff03] rounded-[24px] backdrop-blur-sm hover:bg-[#ffffff08] transition-colors">
+                <div className="p-4 bg-[#707cff]/20 w-max rounded-[12px] mb-6 border border-[#707cff]/30">
+                  <Shield className="w-8 h-8 text-[#707cff]" />
+                </div>
+                <h3 className="text-[24px] font-medium text-white mb-4">
+                  {lang === 'ar' ? 'القطاع البنكي: أمان المعاملات المالية' : 'Banking Sector: Financial Transaction Privacy'}
+                </h3>
+                <p className="text-[16px] text-[#e2e2ea] font-light leading-[1.6]">
+                  {lang === 'ar' 
+                    ? <><strong className="text-white">التحدي:</strong> تواجه البنوك عقبات في تزويد شركات البرمجة الخارجية والمختبرات التقنية ببيانات مالية لاختبار الأنظمة وتطوير نماذج الاحتيال.<br/><strong className="text-white mt-2 block">الحل:</strong> مكن مؤسستك من التعاون والابتكار مع الشركات الخارجية بكل أمان، من خلال تقنية تضمن خصوصية عملائك بشكل كامل وتلبي كل متطلبات الـ PDPL بدون أي تعقيد.</>
+                    : <><strong className="text-white">The Challenge:</strong> Banks face massive bottlenecks when providing external vendors or research labs with financial data for system testing and fraud model development.<br/><strong className="text-white mt-2 block">The Solution:</strong> Enable your organization to collaborate and innovate with external parties securely, through a privacy-first approach that fully satisfies PDPL requirements without any complexity.</>}
+                </p>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -296,26 +342,74 @@ export default function App() {
             <div className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 w-[1000px] h-[400px] bg-[#707cff] rounded-full blur-[200px] opacity-[0.08] pointer-events-none"></div>
             
             <h2 className="text-[48px] font-sans font-medium leading-[1.1] tracking-[-1px] text-white mb-16 text-center relative z-10">
-              The Core Technology
+              {lang === 'ar' ? 'التقنية المحورية للعمل' : 'The Core Technology'}
             </h2>
             <div className="grid md:grid-cols-3 gap-8 relative z-10">
               <div className="bg-[#1b1b22] p-10 rounded-[24px] border border-[#ffffff0a] hover:border-[#707cff]/50 transition-colors duration-500 shadow-2xl">
                 <Network className="text-[#707cff] w-8 h-8 mb-8" />
-                <h3 className="text-[24px] font-sans mb-4 text-white font-medium">Multi-Model Substrate</h3>
-                <p className="text-[16px] text-[#8f8f9d] leading-[1.6] font-light">Access proprietary models including Saudi TFMs, TabTreeFormer, and CTAB-GAN-DP for specific deployment needs.</p>
+                <h3 className="text-[24px] font-sans mb-4 text-white font-medium">{lang === 'ar' ? 'حاضنة النماذج المتقدمة' : 'Multi-Model Substrate'}</h3>
+                <p className="text-[16px] text-[#8f8f9d] leading-[1.6] font-light">{lang === 'ar' ? 'الوصول لنماذج تدفق البيانات المتطورة كـتطبيق TabTreeFormer لضمان عملها بشكل مباشر ومستقل في البيئات المنفصلة.' : 'Access proprietary models including Saudi TFMs, TabTreeFormer, and CTAB-GAN-DP for specific deployment needs.'}</p>
               </div>
               <div className="bg-[#1b1b22] p-10 rounded-[24px] border border-[#ffffff0a] hover:border-[#b100ff]/50 transition-colors duration-500 shadow-2xl">
                 <Activity className="text-[#b100ff] w-8 h-8 mb-8" />
-                <h3 className="text-[24px] font-sans mb-4 text-white font-medium">Kolmogorov-Smirnov Utility</h3>
-                <p className="text-[16px] text-[#8f8f9d] leading-[1.6] font-light">Preserve exact schemas and statistical utility proving Machine Learning Test-on-Safe-Data reliability.</p>
+                <h3 className="text-[24px] font-sans mb-4 text-white font-medium">{lang === 'ar' ? 'مؤشرات (KS) الإحصائية' : 'Kolmogorov-Smirnov Utility'}</h3>
+                <p className="text-[16px] text-[#8f8f9d] leading-[1.6] font-light">{lang === 'ar' ? 'الحفاظ التام على تركيبة هيكل قاعدة البيانات الأصلية وتزويد أنظمة و بيئات الاختبار بنفس مستويات الجودة الواقعية.' : 'Preserve exact schemas and statistical utility proving Machine Learning Test-on-Safe-Data reliability.'}</p>
               </div>
               <div className="bg-[#1b1b22] p-10 rounded-[24px] border border-[#ffffff0a] hover:border-[#9824f9]/50 transition-colors duration-500 shadow-2xl">
                 <Shield className="text-[#9824f9] w-8 h-8 mb-8" />
-                <h3 className="text-[24px] font-sans mb-4 text-white font-medium">PDPL Compliant DCR</h3>
-                <p className="text-[16px] text-[#8f8f9d] leading-[1.6] font-light">Mathematical Differential privacy bounding guarantees defense against Linkage Attacks matching Saudi laws.</p>
+                <h3 className="text-[24px] font-sans mb-4 text-white font-medium">{lang === 'ar' ? 'توافق كامل مع (PDPL)' : 'PDPL Compliant DCR'}</h3>
+                <p className="text-[16px] text-[#8f8f9d] leading-[1.6] font-light">{lang === 'ar' ? 'حاجز حماية تفاضلي رياضي يحول دون محاولات الهجوم أو مطابقة التسريبات ليواكب متطلبات القوانين السعودية.' : 'Mathematical Differential privacy bounding guarantees defense against Linkage Attacks matching Saudi laws.'}</p>
               </div>
             </div>
         </section>
+
+        {/* Enterprise Footer */}
+        <footer className="py-20 bg-[#050508] border-t border-[#ffffff1a] relative z-20">
+          <div className="max-w-7xl mx-auto px-6 relative">
+            <div className="grid md:grid-cols-2 gap-16">
+              <div>
+                 <div className="flex items-center gap-x-3 mb-6">
+                   <Database className="text-[#8f8f9d] w-6 h-6" />
+                   <span className="text-[20px] font-sans font-medium text-white tracking-tight">Well7 Compliance</span>
+                 </div>
+                 <p className="text-[#8f8f9d] text-[15px] leading-relaxed mb-10 font-light max-w-sm">
+                   {lang === 'ar' 
+                     ? "يشكل هذا النظام بيئة مؤسسية متقدمة مبنية على الامتثال الصارم لمتطلبات ولوائح الخصوصية للبيئات المغلقة والخاضعة للتنظيم المالي والحكومي في المملكة العربية السعودية."
+                     : "This software architecture constitutes a Professional-Grade Enterprise System purpose-built for highly regulated domestic environments within the Kingdom of Saudi Arabia."}
+                 </p>
+                 <div className="text-[#5b5b6b] text-[13px] font-mono tracking-wide">
+                    {lang === 'ar' ? "© 2026 Well7. جميع الحقوق محفوظة." : "© 2026 Well7. All rights reserved."}
+                 </div>
+              </div>
+              <div className="space-y-8">
+                 <h4 className="text-white text-[15px] font-medium tracking-[1.5px] uppercase mb-6">
+                   {lang === 'ar' ? "المعايير المؤسسية المشتركة" : "Institutional Standards"}
+                 </h4>
+                 <div className="flex items-start gap-x-4">
+                   <Shield className="w-5 h-5 text-[#707cff] shrink-0 mt-0.5" />
+                   <div>
+                     <h5 className="text-white text-[15px] font-medium mb-1.5">{lang === 'ar' ? "التوافق مع قانون (PDPL)" : "PDPL Compliance"}</h5>
+                     <p className="text-[#8f8f9d] text-[14px] font-light leading-relaxed">{lang === 'ar' ? "تمت هيكلة العمليات بأعلى معايير الخصوصية للامتثال لنظام حماية البيانات الشخصية عبر تبني خوارزميات إخفاء هوية متقدمة." : "Architected with privacy-by-design to adhere strictly to the Saudi Personal Data Protection Law standards, facilitating absolute anonymization."}</p>
+                   </div>
+                 </div>
+                 <div className="flex items-start gap-x-4">
+                   <AlertTriangle className="w-5 h-5 text-[#b100ff] shrink-0 mt-0.5" />
+                   <div>
+                     <h5 className="text-white text-[15px] font-medium mb-1.5">{lang === 'ar' ? "اعتمادية البيئات المعزولة" : "Air-Gapped Ready"}</h5>
+                     <p className="text-[#8f8f9d] text-[14px] font-light leading-relaxed">{lang === 'ar' ? "الأنظمة مصممة للعمل داخلياً من خلال حاويات مغلقة (Docker) بدون الحاجة للاتصال الخارجي لضمان الخصوصية القصوى." : "The full suite operates offline within securely containerized ecosystems utilizing proprietary algorithmic engines."}</p>
+                   </div>
+                 </div>
+                 <div className="flex items-start gap-x-4">
+                   <CheckCircle2 className="w-5 h-5 text-[#9824f9] shrink-0 mt-0.5" />
+                   <div>
+                     <h5 className="text-white text-[15px] font-medium mb-1.5">{lang === 'ar' ? "حوكمة وضوابط البيانات" : "Data Governance"}</h5>
+                     <p className="text-[#8f8f9d] text-[14px] font-light leading-relaxed">{lang === 'ar' ? "يمنع الوصول المباشر للمعلومات الخام وتقليص مخاطر التسريب مع إنتاج بيانات اصطناعية تعكس الواقع بدرجة مثالية." : "Strict tracking measures limit direct access to raw information while fostering high-fidelity synthetic representations."}</p>
+                   </div>
+                 </div>
+              </div>
+            </div>
+          </div>
+        </footer>
       </div>
     );
   }
