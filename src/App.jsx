@@ -315,8 +315,8 @@ export default function App() {
                 </h3>
                 <p className="text-[16px] text-[#e2e2ea] font-light leading-[1.6]">
                   {lang === 'ar' 
-                    ? <><strong className="text-white">التحدي:</strong> تعجز المستشفيات عن مشاركة البيانات الحقيقية مع شركات التقنية والباحثين والمؤسسات الخارجية بسبب مخاطر الخصوصية، مما يعطل الابتكار الطبي.<br/><strong className="text-white mt-2 block">الحل:</strong> الحل بكل بساطة يوفر لك أعلى معايير الخصوصية عشان تشارك البيانات بأمان مع أي جهة خارجية وتطور أبحاثك، بدون ما تشيل هم خصوصية المرضى أو بياناتهم الشخصية.</>
-                    : <><strong className="text-white">The Challenge:</strong> Hospitals cannot share real data with third-party developers, researchers, or external partners due to privacy risks, stalling medical innovation.<br/><strong className="text-white mt-2 block">The Solution:</strong> Our solution prioritizes total privacy, enabling you to share data securely with any external party for training and research without ever worrying about patient confidentiality.</>}
+                    ? <><strong className="text-white">التحدي:</strong> تواجه المستشفيات صعوبة في استخدام بيانات المرضى لتدريب النماذج داخلياً، أو مشاركتها مع الباحثين والشركات الخارجية بسبب مخاطر الخصوصية، مما يعطل الابتكار الطبي.<br/><strong className="text-white mt-2 block">الحل:</strong> الحل بكل بساطة يوفر لك أعلى معايير الخصوصية عشان تشارك البيانات بأمان مع أي جهة خارجية وتطور أبحاثك، بدون ما تشيل هم خصوصية المرضى أو بياناتهم الشخصية.</>
+                    : <><strong className="text-white">The Challenge:</strong> Hospitals struggle to use patient data even for internal model training, let alone sharing it with researchers or external partners due to privacy risks, stalling medical innovation.<br/><strong className="text-white mt-2 block">The Solution:</strong> Our solution prioritizes total privacy, enabling you to share data securely with any external party for training and research without ever worrying about patient confidentiality.</>}
                 </p>
               </div>
 
@@ -329,8 +329,8 @@ export default function App() {
                 </h3>
                 <p className="text-[16px] text-[#e2e2ea] font-light leading-[1.6]">
                   {lang === 'ar' 
-                    ? <><strong className="text-white">التحدي:</strong> تواجه البنوك عقبات في تزويد شركات البرمجة الخارجية والمختبرات التقنية ببيانات مالية لاختبار الأنظمة وتطوير نماذج الاحتيال.<br/><strong className="text-white mt-2 block">الحل:</strong> مكن مؤسستك من التعاون والابتكار مع الشركات الخارجية بكل أمان، من خلال تقنية تضمن خصوصية عملائك بشكل كامل وتلبي كل متطلبات الـ PDPL بدون أي تعقيد.</>
-                    : <><strong className="text-white">The Challenge:</strong> Banks face massive bottlenecks when providing external vendors or research labs with financial data for system testing and fraud model development.<br/><strong className="text-white mt-2 block">The Solution:</strong> Enable your organization to collaborate and innovate with external parties securely, through a privacy-first approach that fully satisfies PDPL requirements without any complexity.</>}
+                    ? <><strong className="text-white">التحدي:</strong> تواجه البنوك عقبات في استخدام البيانات المالية الحساسة لتدريب النماذج داخلياً، أو تزويد الشركات الخارجية والمختبرات التقنية بالبيانات اللازمة للتطوير والاختبار.<br/><strong className="text-white mt-2 block">الحل:</strong> مكن مؤسستك من التعاون والابتكار مع الشركات الخارجية بكل أمان، من خلال تقنية تضمن خصوصية عملائك بشكل كامل وتلبي كل متطلبات الـ PDPL بدون أي تعقيد.</>
+                    : <><strong className="text-white">The Challenge:</strong> Banks face bottlenecks when using sensitive financial data for internal model training, or providing external vendors and labs with enough data for development and testing.<br/><strong className="text-white mt-2 block">The Solution:</strong> Enable your organization to collaborate and innovate with external parties securely, through a privacy-first approach that fully satisfies PDPL requirements without any complexity.</>}
                 </p>
               </div>
             </div>
