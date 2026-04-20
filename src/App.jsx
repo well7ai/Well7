@@ -143,6 +143,47 @@ export default function App() {
   const [activeTab, setActiveTab] = useState('landing');
   const [studioView, setStudioView] = useState('catalog');
   const [lang, setLang] = useState('en');
+  const [contactForm, setContactForm] = useState({ name: '', email: '', phone: '', message: '' });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState(null); // 'success' | 'error' | null
+  
+  const FORMSPREE_ID = "xwvanpzz"; // REAL FORMSPREE ENDPOINT
+  
+  const [blogs] = useState([
+    {
+      id: 1,
+      title_en: "The Future of Synthetic Data in Saudi Arabia",
+      title_ar: "مستقبل البيانات الاصطناعية في المملكة العربية السعودية",
+      excerpt_en: "How generative AI is revolutionizing data privacy and accelerating innovation in the Kingdom's tech ecosystem.",
+      excerpt_ar: "كيف يغير الذكاء الاصطناعي التوليدي مفهوم خصوصية البيانات ويسرع الابتكار في المنظومة التقنية للمملكة.",
+      date: "2026-04-15",
+      category_en: "Strategy",
+      category_ar: "إستراتيجية",
+      image: "https://images.unsplash.com/photo-1639322537228-f710d846310a?q=80&w=2000"
+    },
+    {
+      id: 2,
+      title_en: "Navigating PDPL with Synthetic Clones",
+      title_ar: "الامتثال لنظام حماية البيانات الشخصية (PDPL) عبر النسخ الاصطناعية",
+      excerpt_en: "A deep dive into how Well7 ensures 100% compliance with SDAIA regulations through mathematical privacy.",
+      excerpt_ar: "تحليل عميق لكيفية ضمان Well7 للامتثال التام للوائح سدايا من خلال الخصوصية الرياضية.",
+      date: "2026-04-10",
+      category_en: "Compliance",
+      category_ar: "الامتثال",
+      image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2000"
+    },
+    {
+      id: 3,
+      title_en: "Building Scalable AI within Restricted Environments",
+      title_ar: "بناء ذكاء اصطناعي قابل للتوسع داخل البيئات المقيدة",
+      excerpt_en: "Best practices for training large language models on sensitive healthcare and banking datasets.",
+      excerpt_ar: "أفضل الممارسات لتدريب نماذج لغوية كبيرة على مجموعات بيانات الرعاية الصحية والمصرفية الحساسة.",
+      date: "2026-04-05",
+      category_en: "Engineering",
+      category_ar: "هندسة",
+      image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=2000"
+    }
+  ]);
   
   const [datasets, setDatasets] = useState([]);
   const [models] = useState([
@@ -202,8 +243,23 @@ export default function App() {
               <span className="text-[22px] font-sans font-medium tracking-tight text-white">Well7</span>
             </div>
             <div className="flex items-center gap-x-4">
-              <button onClick={() => setLang(lang === 'en' ? 'ar' : 'en')} className="text-white/80 hover:text-white px-4 py-2 text-[15px] font-medium transition-colors rounded-md hover:bg-white/5 border border-white/10 flex items-center justify-center">
+              <button 
+                onClick={() => setLang(lang === 'en' ? 'ar' : 'en')} 
+                className="text-white/80 hover:text-white px-4 py-2 text-[15px] font-medium transition-colors rounded-md hover:bg-white/5 border border-white/10 flex items-center justify-center"
+              >
                 {lang === 'en' ? 'العربية' : 'English'}
+              </button>
+              <button 
+                onClick={() => setActiveTab('blog')} 
+                className={`px-4 py-2 text-[15px] font-medium transition-colors rounded-md hover:bg-white/5 ${activeTab === 'blog' ? 'text-white' : 'text-white/80'}`}
+              >
+                {lang === 'ar' ? 'المدونة' : 'Blog'}
+              </button>
+              <button 
+                onClick={() => setActiveTab('contact')} 
+                className={`px-4 py-2 text-[15px] font-medium transition-colors rounded-md hover:bg-white/5 ${activeTab === 'contact' ? 'text-white' : 'text-white/80'}`}
+              >
+                {lang === 'ar' ? 'اتصل بنا' : 'Contact'}
               </button>
               <button onClick={() => setActiveTab('studio')} className="text-white/80 hover:text-white px-4 py-2 text-[15px] font-medium transition-colors rounded-md hover:bg-white/5">
                 {lang === 'ar' ? 'الاستوديو' : 'Studio'}
@@ -415,6 +471,250 @@ export default function App() {
   }
 
   /* -------------------
+     BLOG PAGE (NEWERA THEME)
+  ---------------------*/
+  if (activeTab === 'blog') {
+    return (
+      <div className="min-h-screen bg-[#0a0a0f] font-sans text-white" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+        <nav className="fixed top-0 w-full z-50 border-b border-[#ffffff1a] bg-[#0a0a0fcc] backdrop-blur-[20px]">
+          <div className="max-w-7xl mx-auto p-6 flex justify-between items-center">
+            <div className="flex items-center space-x-3 gap-x-3 cursor-pointer" onClick={() => setActiveTab('landing')}>
+              <Database className="text-white w-6 h-6" />
+              <span className="text-[22px] font-sans font-medium tracking-tight text-white">Well7</span>
+            </div>
+            <div className="flex items-center gap-x-6">
+              <button onClick={() => setActiveTab('landing')} className="text-white/80 hover:text-white px-2 py-1 text-[15px] font-medium transition-colors">{lang === 'ar' ? 'الرئيسية' : 'Home'}</button>
+              <button onClick={() => setActiveTab('contact')} className="text-white/80 hover:text-white px-2 py-1 text-[15px] font-medium transition-colors">{lang === 'ar' ? 'اتصل بنا' : 'Contact'}</button>
+              <button 
+                onClick={() => setActiveTab('studio')}
+                className="bg-white/10 hover:bg-white/20 text-white px-5 py-2 rounded-[8px] font-medium transition-all text-[15px] border border-white/10"
+              >
+                {lang === 'ar' ? 'الاستوديو' : 'Studio'}
+              </button>
+            </div>
+          </div>
+        </nav>
+
+        <section className="pt-48 pb-32 max-w-7xl mx-auto px-6">
+          <div className="text-center mb-24">
+            <h1 className="text-[56px] font-sans font-medium tracking-tight mb-6">
+              {lang === 'ar' ? 'الأفكار والرؤى' : 'Engineered Intelligence'}
+            </h1>
+            <p className="text-[20px] text-muted-slate font-light max-w-2xl mx-auto">
+              {lang === 'ar' ? 'استكشاف مستقبل الخصوصية والذكاء الاصطناعي والسيادة على البيانات في العصر الرقمي الجديد.' : 'Exploring the intersection of privacy, enterprise AI, and data sovereignty in the new digital era.'}
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {blogs.map(post => (
+              <div key={post.id} className="group bg-[#111116] border border-[#ffffff0a] rounded-[24px] overflow-hidden hover:border-[#707cff]/30 transition-all duration-500">
+                <div className="h-60 overflow-hidden relative">
+                  <img src={post.image} alt={post.title_en} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-80" />
+                  <div className="absolute top-4 left-4 inline-block px-3 py-1 bg-[#707cff]/20 border border-[#707cff]/40 rounded-full text-[12px] font-medium tracking-wide text-[#707cff] backdrop-blur-md">
+                    {lang === 'ar' ? post.category_ar : post.category_en}
+                  </div>
+                </div>
+                <div className="p-8">
+                  <div className="text-[14px] text-muted-slate mb-4 font-mono">{post.date}</div>
+                  <h3 className="text-[22px] font-medium mb-4 leading-tight group-hover:text-[#707cff] transition-colors">
+                    {lang === 'ar' ? post.title_ar : post.title_en}
+                  </h3>
+                  <p className="text-muted-slate leading-relaxed font-light mb-8">
+                    {lang === 'ar' ? post.excerpt_ar : post.excerpt_en}
+                  </p>
+                  <button className="flex items-center gap-x-2 text-[14px] font-medium text-white/80 group-hover:text-white transition-all">
+                    <span>{lang === 'ar' ? 'اقرأ المزيد' : 'Read Article'}</span>
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <footer className="py-20 bg-[#050508] border-t border-[#ffffff1a]">
+          <div className="max-w-7xl mx-auto px-6 text-center">
+             <div className="text-[14px] text-muted-slate font-mono uppercase tracking-widest mb-4">{lang === 'ar' ? 'المعايير المؤسسية' : 'Institutional Data Sovereignty'}</div>
+             <p className="text-[13px] text-white/40">{lang === 'ar' ? '© 2026 Well7. جميع الحقوق محفوظة.' : '© 2026 Well7. All rights reserved.'}</p>
+          </div>
+        </footer>
+      </div>
+    );
+  }
+
+  /* -------------------
+     CONTACT PAGE (NEWERA THEME)
+  ---------------------*/
+  if (activeTab === 'contact') {
+    return (
+      <div className="min-h-screen bg-[#0a0a0f] font-sans text-white" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+        <nav className="fixed top-0 w-full z-50 border-b border-[#ffffff1a] bg-[#0a0a0fcc] backdrop-blur-[20px]">
+          <div className="max-w-7xl mx-auto p-6 flex justify-between items-center">
+            <div className="flex items-center space-x-3 gap-x-3 cursor-pointer" onClick={() => setActiveTab('landing')}>
+              <Database className="text-white w-6 h-6" />
+              <span className="text-[22px] font-sans font-medium tracking-tight text-white">Well7</span>
+            </div>
+            <div className="flex items-center gap-x-6">
+              <button onClick={() => setActiveTab('landing')} className="text-white/80 hover:text-white px-2 py-1 text-[15px] font-medium transition-colors">{lang === 'ar' ? 'الرئيسية' : 'Home'}</button>
+              <button onClick={() => setActiveTab('blog')} className="text-white/80 hover:text-white px-2 py-1 text-[15px] font-medium transition-colors">{lang === 'ar' ? 'المدونة' : 'Blog'}</button>
+              <button 
+                onClick={() => setActiveTab('studio')}
+                className="bg-white/10 hover:bg-white/20 text-white px-5 py-2 rounded-[8px] font-medium transition-all text-[15px] border border-white/10"
+              >
+                {lang === 'ar' ? 'الاستوديو' : 'Studio'}
+              </button>
+            </div>
+          </div>
+        </nav>
+
+        <section className="pt-48 pb-32 max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-24 items-start">
+          <div>
+            <h1 className="text-[64px] font-sans font-medium tracking-tight mb-8 leading-[1.1]">
+              {lang === 'ar' ? <>دعنا نتحدث عن<br/>سيادة بياناتك.</> : <>Let's discuss<br/>your data sovereignty.</>}
+            </h1>
+            <p className="text-[20px] text-muted-slate font-light leading-relaxed mb-12 max-w-lg">
+              {lang === 'ar' ? 'تواصل مع فريق الخبراء لدينا لاستكشاف كيف يمكن لمنصة Well7 تسريع عمليات الذكاء الاصطناعي مع الحفاظ على الامتثال التام.' : 'Connect with our team to explore how Well7 can accelerate your AI initiatives while maintaining absolute compliance within regulated environments.'}
+            </p>
+
+            <div className="space-y-8">
+              <div className="flex items-center gap-x-6">
+                <div className="w-12 h-12 rounded-full bg-[#707cff]/10 border border-[#707cff]/20 flex items-center justify-center text-[#707cff]">
+                   <Shield className="w-5 h-5" />
+                </div>
+                <div>
+                   <div className="text-[14px] font-medium uppercase tracking-wider text-muted-slate">{lang === 'ar' ? 'الامتثال' : 'Compliance First'}</div>
+                   <div className="text-[16px] text-white/80">SDAIA PDPL Certified Approach</div>
+                </div>
+              </div>
+              <div className="flex items-center gap-x-6">
+                <div className="w-12 h-12 rounded-full bg-[#b100ff]/10 border border-[#b100ff]/20 flex items-center justify-center text-[#b100ff]">
+                   <Zap className="w-5 h-5" />
+                </div>
+                <div>
+                   <div className="text-[14px] font-medium uppercase tracking-wider text-muted-slate">{lang === 'ar' ? 'التنصيب' : 'Deployment'}</div>
+                   <div className="text-[16px] text-white/80">Air-Gapped & Sovereign Cloud</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-[#111116] border border-[#ffffff0a] p-12 rounded-[32px] shadow-2xl relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-[#707cff] rounded-full blur-[120px] opacity-10 -translate-y-1/2 translate-x-1/2"></div>
+            
+            <div className="space-y-6 relative z-10">
+               <div className="grid md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-[14px] font-medium text-muted-slate mb-2">{lang === 'ar' ? 'الاسم' : 'Full Name'}</label>
+                    <input 
+                      type="text" 
+                      value={contactForm.name}
+                      onChange={e => setContactForm({...contactForm, name: e.target.value})}
+                      className="w-full bg-white/5 border border-white/10 px-4 py-3 rounded-[12px] text-white focus:outline-none focus:border-[#707cff] transition-colors" 
+                      placeholder={lang === 'ar' ? 'أدخل اسمك الكامل' : 'John Doe'}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[14px] font-medium text-muted-slate mb-2">{lang === 'ar' ? 'البريد الإلكتروني' : 'Email Address'}</label>
+                    <input 
+                      type="email" 
+                      value={contactForm.email}
+                      onChange={e => setContactForm({...contactForm, email: e.target.value})}
+                      className="w-full bg-white/5 border border-white/10 px-4 py-3 rounded-[12px] text-white focus:outline-none focus:border-[#707cff] transition-colors" 
+                      placeholder="john@enterprise.com"
+                    />
+                  </div>
+               </div>
+               <div>
+                  <label className="block text-[14px] font-medium text-muted-slate mb-2">{lang === 'ar' ? 'رقم الهاتف (اختياري)' : 'Phone Number (Optional)'}</label>
+                  <input 
+                    type="tel" 
+                    value={contactForm.phone}
+                    onChange={e => setContactForm({...contactForm, phone: e.target.value})}
+                    className="w-full bg-white/5 border border-white/10 px-4 py-3 rounded-[12px] text-white focus:outline-none focus:border-[#707cff] transition-colors" 
+                    placeholder="+966 5X XXX XXXX"
+                  />
+               </div>
+               <div>
+                  <label className="block text-[14px] font-medium text-muted-slate mb-2">{lang === 'ar' ? 'الرسالة' : 'Message'}</label>
+                  <textarea 
+                    rows={4} 
+                    value={contactForm.message}
+                    onChange={e => setContactForm({...contactForm, message: e.target.value})}
+                    className="w-full bg-white/5 border border-white/10 px-4 py-3 rounded-[12px] text-white focus:outline-none focus:border-[#707cff] transition-colors resize-none" 
+                    placeholder={lang === 'ar' ? 'كيف يمكننا مساعدتك؟' : 'How can we help your team?'}
+                  />
+               </div>
+               <button 
+                disabled={isSubmitting}
+                onClick={async () => {
+                  if (!contactForm.name || !contactForm.email || !contactForm.message) {
+                    return alert(lang === 'ar' ? 'يرجى ملء جميع الحقول المطلوبة (الاسم، البريد الإلكتروني، الرسالة).' : 'Please fill in all required fields (Name, Email, Message).');
+                  }
+
+                  setIsSubmitting(true);
+                  setSubmitStatus(null);
+                  
+                  try {
+                    const response = await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                      body: JSON.stringify(contactForm)
+                    });
+
+                    if (response.ok) {
+                      setSubmitStatus('success');
+                      setContactForm({ name: '', email: '', phone: '', message: '' });
+                    } else {
+                      setSubmitStatus('error');
+                    }
+                  } catch (error) {
+                    setSubmitStatus('error');
+                  } finally {
+                    setIsSubmitting(false);
+                  }
+                }}
+                className={`w-full bg-gradient-to-r from-[#707cff] to-[#b100ff] text-white py-4 rounded-[12px] font-medium transition-all shadow-[inset_6px_0_12px_rgba(255,255,255,0.22)] flex items-center justify-center gap-x-2 ${isSubmitting ? 'opacity-70 cursor-not-allowed' : 'hover:opacity-90'}`}
+               >
+                 {isSubmitting ? (
+                   <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                 ) : null}
+                 <span>{lang === 'ar' ? 'إرسال الرسالة' : 'Send Message'}</span>
+               </button>
+
+               {submitStatus === 'success' && (
+                 <div className="p-4 bg-green-500/10 border border-green-500/30 rounded-[12px] text-green-400 text-[14px] flex items-center gap-x-2 animate-in fade-in slide-in-from-top-2">
+                    <CheckCircle2 className="w-4 h-4" />
+                    <span>{lang === 'ar' ? 'تم استلام رسالتك بنجاح. سيتواصل معك فريقنا قريباً.' : 'Message received. Our team will contact you shortly.'}</span>
+                 </div>
+               )}
+
+               {submitStatus === 'error' && (
+                 <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-[12px] text-red-400 text-[14px] flex items-center gap-x-2 animate-in fade-in slide-in-from-top-2">
+                    <AlertTriangle className="w-4 h-4" />
+                    <span>{lang === 'ar' ? 'عذراً، حدث خطأ أثناء الإرسال. يرجى المحاولة مرة أخرى.' : 'Sorry, something went wrong. Please try again or contact us directly.'}</span>
+                 </div>
+               )}
+            </div>
+          </div>
+        </section>
+
+        <section className="py-24 bg-[#0d0d14] border-y border-[#ffffff1a]">
+          <div className="max-w-7xl mx-auto px-6 flex flex-col items-center">
+             <h2 className="text-[32px] font-medium mb-8 text-center">{lang === 'ar' ? 'جاهز لاستكشاف المنصة؟' : 'Ready to explore the platform?'}</h2>
+             <button 
+                onClick={() => setActiveTab('studio')}
+                className="flex items-center gap-x-2 bg-white text-black px-8 py-4 rounded-[12px] font-medium hover:bg-white/90 transition-all shadow-xl"
+             >
+               <LayoutDashboard className="w-5 h-5" />
+               <span>{lang === 'ar' ? 'الدخول إلى الاستوديو' : 'Launch Well7 Studio'}</span>
+             </button>
+          </div>
+        </section>
+      </div>
+    );
+  }
+
+  /* -------------------
      ENTERPRISE STUDIO (COHERE THEME)
   ---------------------*/
   return (
@@ -438,10 +738,17 @@ export default function App() {
             { id: 'synthesis', icon: <Zap className="w-4 h-4"/>, label: 'Protection Studio' },
             { id: 'models', icon: <Network className="w-4 h-4"/>, label: 'Model Registry' },
             { id: 'reports', icon: <BarChart3 className="w-4 h-4"/>, label: 'Evaluation Audit' },
+            { id: 'contact', icon: <Shield className="w-4 h-4 text-[#707cff]"/>, label: 'Technical Support' },
           ].map(item => (
             <button 
               key={item.id}
-              onClick={() => setStudioView(item.id)}
+              onClick={() => {
+                if (item.id === 'contact') {
+                  setActiveTab('contact');
+                } else {
+                  setStudioView(item.id);
+                }
+              }}
               className={`w-full flex items-center space-x-3 px-4 py-2.5 rounded-[8px] transition-colors text-[14px] ${
                 studioView === item.id 
                 ? 'bg-[#ffffff10] text-pure-white font-medium' 
