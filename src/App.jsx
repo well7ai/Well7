@@ -147,7 +147,7 @@ export default function App() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null); // 'success' | 'error' | null
   
-  const FORMSPREE_ID = "xwvanpzz"; // REAL FORMSPREE ENDPOINT
+  const WEB3FORMS_ACCESS_KEY = "cc5904e7-1d9f-4bf6-9f31-733aec968ebe"; // WEB3FORMS ACCESS KEY
   
   const [blogs] = useState([
     {
@@ -655,10 +655,15 @@ export default function App() {
                   setSubmitStatus(null);
                   
                   try {
-                    const response = await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
-                      method: 'POST',
-                      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-                      body: JSON.stringify(contactForm)
+                    const response = await fetch("https://api.web3forms.com/submit", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json", "Accept": "application/json" },
+                      body: JSON.stringify({
+                        access_key: WEB3FORMS_ACCESS_KEY,
+                        ...contactForm,
+                        subject: `New Contact Lead from Well7: ${contactForm.name}`,
+                        from_name: "Well7 Platform"
+                      })
                     });
 
                     if (response.ok) {
